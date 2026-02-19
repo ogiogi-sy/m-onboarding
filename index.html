@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metro Bank - Business Onboarding</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-navy': '#00338D',
+            'brand-blue': '#0046AD',
+            'offwhite-50': '#F8FAFC',
+            'text-secondary': '#64748B',
+            'text-muted': '#94A3B8',
+            'divider': '#E2E8F0',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Animations */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+    @keyframes pulse { 50% { opacity: .5; } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .animate-ping { animation: ping 1s cubic-bezier(0, 0, .2, 1) infinite; }
+    .animate-pulse { animation: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite; }
+
+    /* Fade in animation */
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Confetti animation */
+    .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 100; }
+    .confetti { position: absolute; width: 10px; height: 10px; animation: confetti-fall 3s ease-out forwards; }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Screen reader only utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  </style>
+</head>
+<body class="bg-offwhite-50 font-sans">
+  <div id="app"></div>
+
+  <!-- SVG Icons (Lucide-like) -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m15 18-6-6 6-6"/>
+    </symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m9 18 6-6-6-6"/>
+    </symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </symbol>
+    <symbol id="icon-chevron-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m18 15-6-6-6 6"/>
+    </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+    </symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/>
+    </symbol>
+    <symbol id="icon-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>
+    </symbol>
+    <symbol id="icon-credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6 9 17l-5-5"/>
+    </symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+    </symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+    </symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+    </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14"/><path d="M12 5v14"/>
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </symbol>
+    <symbol id="icon-fingerprint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
+    </symbol>
+    <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>
+    </symbol>
+    <symbol id="icon-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>
+    </symbol>
+    <symbol id="icon-landmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+    <symbol id="icon-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+    </symbol>
+    <symbol id="icon-scan-face" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>
+    </symbol>
+    <symbol id="icon-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>
+    </symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+    </symbol>
+    <symbol id="icon-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+    </symbol>
+    <!-- Bank Logos (Simplified) -->
+    <symbol id="bank-barclays" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#00AEEF"/>
+      <path d="M8 12h16v2H8v-2zm0 4h16v2H8v-2zm0 4h12v2H8v-2z" fill="white"/>
+    </symbol>
+    <symbol id="bank-hsbc" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#DB0011"/>
+      <path d="M8 8h7v7H8V8zm9 0h7v7h-7V8zm-9 9h7v7H8v-7zm9 0h7v7h-7v-7z" fill="white"/>
+    </symbol>
+    <symbol id="bank-lloyds" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#006A4D"/>
+      <path d="M16 8c-4 0-7 3-7 7s3 7 7 7c2 0 4-1 5-2l-3-3c-1 1-2 1-2 1-2 0-3-2-3-3s1-3 3-3c1 0 2 0 2 1l3-3c-1-1-3-2-5-2z" fill="white"/>
+    </symbol>
+    <symbol id="bank-natwest" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#5A287D"/>
+      <path d="M10 10l6 12 6-12h-3l-3 6-3-6h-3z" fill="white"/>
+    </symbol>
+    <symbol id="bank-santander" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#EC0000"/>
+      <path d="M16 8l-6 8 6 8 6-8-6-8zm0 4l3 4-3 4-3-4 3-4z" fill="white"/>
+    </symbol>
+    <symbol id="bank-monzo" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#14233C"/>
+      <rect x="10" y="10" width="12" height="12" rx="2" fill="#FF5A5F"/>
+    </symbol>
+    <symbol id="bank-revolut" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#0075EB"/>
+      <path d="M12 10h5c2 0 4 1 4 4 0 2-1 3-2 4l3 4h-4l-2-4h-1v4h-3V10zm3 6h2c1 0 1-1 1-2s0-2-1-2h-2v4z" fill="white"/>
+    </symbol>
+    <symbol id="bank-starling" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="16" fill="#6935D3"/>
+      <circle cx="16" cy="16" r="6" fill="white"/>
+      <circle cx="16" cy="16" r="3" fill="#6935D3"/>
+    </symbol>
+  </svg>
+
+  <script>
+    // =====================
+    // STATE MANAGEMENT
+    // =====================
+    const state = {
+      step: 0,
+      journeyType: 'ideal', // 'ideal' | 'optimised'
+      userName: '', // Early name capture for personalization
+      selectedCompany: null,
+      directors: [],
+      passkeyCreated: false,
+      idVerification: null,
+      openBanking: null,
+      selectedBank: null,
+      businessDetails: {},
+      tradingAddress: 'registered', // 'registered' | 'different'
+      tradingAddressProof: null,
+      isEditing: false,
+      editingDirectorId: null,
+      termination: null,
+      showMilestone: null // 'company' | 'directors' | 'identity' | 'banking' | null
+    };
+
+    // Mock data
+    const mockCompanies = [
+      { name: 'Metro Bank Plc', number: '10261677', address: 'One Southampton Row, London, WC1B 5HA', status: 'Active', incorporationDate: '2016-06-20' },
+      { name: 'Metro Bank Holdings', number: '06419578', address: 'One Southampton Row, London, WC1B 5HA', status: 'Active', incorporationDate: '2007-11-06' }
+    ];
+
+    const mockDirectors = [
+      { id: '1', name: 'John Smith', role: 'Director', isPsc: true, appointmentDate: 'Jan 2020', selected: true, email: 'john.smith@metrobank.com', phone: '07700 900 000', isPrimaryHolder: true },
+      { id: '2', name: 'Jane Doe', role: 'Director', isPsc: false, appointmentDate: 'Mar 2021', selected: false, email: '', phone: '' }
+    ];
+
+    const banks = [
+      { name: 'Barclays', color: 'bg-[#00AEEF]', logo: 'barclays' },
+      { name: 'HSBC', color: 'bg-[#DB0011]', logo: 'hsbc' },
+      { name: 'Lloyds', color: 'bg-[#006A4D]', logo: 'lloyds' },
+      { name: 'NatWest', color: 'bg-[#5A287D]', logo: 'natwest' },
+      { name: 'Santander', color: 'bg-[#EC0000]', logo: 'santander' },
+      { name: 'Monzo', color: 'bg-[#14233C]', logo: 'monzo' },
+      { name: 'Revolut', color: 'bg-[#0075EB]', logo: 'revolut' },
+      { name: 'Starling', color: 'bg-[#6935D3]', logo: 'starling' },
+    ];
+
+    // =====================
+    // HELPER FUNCTIONS
+    // =====================
+    function icon(name, className = 'w-6 h-6') {
+      return `<svg class="${className}"><use href="#icon-${name}"/></svg>`;
+    }
+
+    // Transform ALL CAPS to Title Case
+    function toTitleCase(str) {
+      if (!str) return '';
+      return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function getTotalSteps() {
+      return state.journeyType === 'optimised' ? 20 : 10;
+    }
+
+    function getProgressPercentage() {
+      // Add milestone jumps for psychological reward
+      const baseProgress = Math.round((state.step / getTotalSteps()) * 100);
+
+      // Ideal flow milestones
+      if (state.journeyType === 'ideal') {
+        if (state.step >= 6 && state.idVerification?.status === 'verified') return Math.max(baseProgress, 50); // ID verified jump
+        if (state.step >= 8 && state.openBanking?.connected) return Math.max(baseProgress, 75); // Open Banking connected
+      }
+
+      // Optimised flow milestones
+      if (state.journeyType === 'optimised') {
+        if (state.step >= 6 && state.idVerification?.status === 'verified') return Math.max(baseProgress, 40);
+        if (state.step >= 8 && state.openBanking?.connected) return Math.max(baseProgress, 55);
+      }
+
+      return baseProgress;
+    }
+
+    function getTimeRemaining() {
+      return Math.max(1, Math.ceil((getTotalSteps() - state.step) * 0.4));
+    }
+
+    function nextStep() {
+      if (state.isEditing) {
+        const reviewStep = state.journeyType === 'optimised' ? 19 : 9;
+        state.step = reviewStep;
+        state.isEditing = false;
+        render();
+        return;
+      }
+
+      // Check for milestone transitions (Ideal flow)
+      if (state.journeyType === 'ideal') {
+        if (state.step === 3) { // Company confirmed → Directors
+          state.showMilestone = 'company';
+          render();
+          return;
+        }
+        if (state.step === 4) { // Directors → Passkey
+          state.showMilestone = 'directors';
+          render();
+          return;
+        }
+        if (state.step === 6 && state.idVerification?.status === 'verified') { // Identity verified → Connect Bank
+          state.showMilestone = 'identity';
+          render();
+          return;
+        }
+        if (state.step === 8 && state.openBanking?.connected) { // Open Banking → Review
+          state.showMilestone = 'banking';
+          render();
+          return;
+        }
+      }
+
+      // Check for milestone transitions (Optimised flow)
+      if (state.journeyType === 'optimised') {
+        if (state.step === 3) { // Company confirmed → Directors
+          state.showMilestone = 'company';
+          render();
+          return;
+        }
+        if (state.step === 4) { // Directors → OTP
+          state.showMilestone = 'directors';
+          render();
+          return;
+        }
+        if (state.step === 7 && state.idVerification?.status === 'verified') { // Identity verified → Trading Address
+          state.showMilestone = 'identity';
+          render();
+          return;
+        }
+        if (state.step === 10 && state.openBanking?.connected) { // Open Banking → Business Activity
+          state.showMilestone = 'banking';
+          render();
+          return;
+        }
+      }
+
+      state.step++;
+      render();
+    }
+
+    function prevStep() {
+      if (state.editingDirectorId) {
+        state.editingDirectorId = null;
+      } else {
+        state.step--;
+      }
+      render();
+    }
+
+    function goToStep(step) {
+      state.step = step;
+      state.isEditing = true;
+      render();
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-brand-navy text-white px-6 py-3 rounded-full shadow-lg z-50 fade-in';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showHelpSheet() {
+      // Remove existing sheet if any
+      const existing = document.getElementById('help-sheet-overlay');
+      if (existing) existing.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'help-sheet-overlay';
+      overlay.className = 'fixed inset-0 bg-black/50 z-50 transition-opacity';
+      overlay.onclick = (e) => { if (e.target === overlay) closeHelpSheet(); };
+
+      const sheet = document.createElement('div');
+      sheet.id = 'help-sheet';
+      sheet.className = 'fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] shadow-2xl z-50 transform translate-y-full transition-transform duration-300 ease-out max-h-[85vh] overflow-y-auto';
+      sheet.innerHTML = `
+        <div class="p-6 space-y-6">
+          <!-- Handle bar -->
+          <div class="flex justify-center">
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+          </div>
+
+          <!-- Header -->
+          <div class="text-center space-y-2">
+            <div class="w-14 h-14 mx-auto rounded-full bg-brand-blue/10 flex items-center justify-center">
+              <svg class="w-7 h-7 text-brand-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-brand-navy">Need help?</h2>
+            <p class="text-text-secondary text-sm">We're here to support you through the application process.</p>
+          </div>
+
+          <!-- Contact options -->
+          <div class="space-y-3">
+            <a href="tel:03450808500" class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors">
+              <div class="w-12 h-12 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="font-bold text-brand-navy">Call us</p>
+                <p class="text-brand-blue font-medium">0345 08 08 500</p>
+                <p class="text-text-secondary text-xs mt-0.5">Mon-Fri 8am-8pm, Sat 9am-5pm</p>
+              </div>
+            </a>
+
+            <a href="mailto:business@metrobankonline.co.uk" class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors">
+              <div class="w-12 h-12 rounded-full bg-brand-blue/10 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="font-bold text-brand-navy">Email us</p>
+                <p class="text-brand-blue font-medium text-sm">business@metrobankonline.co.uk</p>
+                <p class="text-text-secondary text-xs mt-0.5">We'll respond within 24 hours</p>
+              </div>
+            </a>
+          </div>
+
+          <!-- FAQ -->
+          <div class="space-y-3">
+            <h3 class="font-bold text-brand-navy">Common questions</h3>
+            <details class="group bg-slate-50 rounded-2xl">
+              <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
+                <span class="font-medium text-brand-navy text-sm">How long does the application take?</span>
+                <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-4 pb-4 text-text-secondary text-sm">Most applications are completed in under 10 minutes. You can save and resume anytime.</p>
+            </details>
+            <details class="group bg-slate-50 rounded-2xl">
+              <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
+                <span class="font-medium text-brand-navy text-sm">What documents do I need?</span>
+                <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-4 pb-4 text-text-secondary text-sm">You'll need a valid passport or UK driving licence for ID verification. No paperwork needed if you use Open Banking.</p>
+            </details>
+            <details class="group bg-slate-50 rounded-2xl">
+              <summary class="flex items-center justify-between p-4 cursor-pointer list-none">
+                <span class="font-medium text-brand-navy text-sm">Can I save and come back later?</span>
+                <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </summary>
+              <p class="px-4 pb-4 text-text-secondary text-sm">Yes! Your progress is automatically saved. Use your email to resume from where you left off.</p>
+            </details>
+          </div>
+
+          <!-- Close button -->
+          <button onclick="closeHelpSheet()" class="w-full py-4 text-brand-blue font-bold text-center">
+            Close
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(sheet);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+        sheet.style.transform = 'translateY(0)';
+      });
+    }
+
+    function closeHelpSheet() {
+      const overlay = document.getElementById('help-sheet-overlay');
+      const sheet = document.getElementById('help-sheet');
+      if (overlay) overlay.style.opacity = '0';
+      if (sheet) sheet.style.transform = 'translateY(100%)';
+      setTimeout(() => {
+        if (overlay) overlay.remove();
+        if (sheet) sheet.remove();
+      }, 300);
+    }
+
+    function showAutoSaveIndicator() {
+      const existing = document.getElementById('auto-save-indicator');
+      if (existing) existing.remove();
+
+      const indicator = document.createElement('div');
+      indicator.id = 'auto-save-indicator';
+      indicator.className = 'fixed top-4 right-4 flex items-center gap-2 bg-green-600 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-lg z-50 fade-in';
+      indicator.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Progress saved';
+      document.body.appendChild(indicator);
+      setTimeout(() => {
+        indicator.style.transition = 'opacity 0.3s';
+        indicator.style.opacity = '0';
+        setTimeout(() => indicator.remove(), 300);
+      }, 1500);
+    }
+
+    function showConfetti() {
+      const container = document.createElement('div');
+      container.className = 'confetti-container';
+      document.body.appendChild(container);
+
+      const colors = ['#00338D', '#0046AD', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        container.appendChild(confetti);
+      }
+      setTimeout(() => container.remove(), 3500);
+    }
+
+    function getPersonalizedGreeting() {
+      if (state.userName) {
+        return `Great, ${state.userName}!`;
+      }
+      return '';
+    }
+
+    function getStageName(step) {
+      if (state.journeyType === 'ideal') {
+        const stages = {
+          1: 'Getting Started',
+          2: 'Company Search',
+          3: 'Confirm Company',
+          4: 'Directors',
+          5: 'Identity Setup',
+          6: 'Verify Identity',
+          7: 'Connect Bank',
+          8: 'Select Bank',
+          9: 'Review & Submit'
+        };
+        return stages[step] || '';
+      } else {
+        const stages = {
+          1: 'Getting Started',
+          2: 'Company Search',
+          3: 'Confirm Company',
+          4: 'Directors',
+          5: 'OTP Verification',
+          6: 'Create Password',
+          7: 'Verify Identity',
+          8: 'Trading Address',
+          9: 'Connect Bank',
+          10: 'Select Bank',
+          11: 'Business Activity',
+          12: 'Monthly Income',
+          13: 'Cash Handling',
+          14: 'International',
+          15: 'Additional Info',
+          16: 'Regulatory',
+          17: 'Account Type',
+          18: 'Debit Card',
+          19: 'Review & Submit'
+        };
+        return stages[step] || '';
+      }
+    }
+
+    // Milestone data for interstitial screens
+    const milestones = {
+      company: {
+        icon: 'building',
+        iconBg: 'bg-green-100',
+        iconColor: 'text-green-600',
+        title: 'Company details saved',
+        message: 'We found your company on Companies House.',
+        nextLabel: 'Directors',
+        nextDescription: 'We\'ll show you who needs to verify their identity.'
+      },
+      directors: {
+        icon: 'user',
+        iconBg: 'bg-green-100',
+        iconColor: 'text-green-600',
+        title: 'Directors confirmed',
+        message: 'Great progress! Your directors are set up.',
+        nextLabel: 'Identity verification',
+        nextDescription: 'Quick selfie and ID check to confirm who you are.'
+      },
+      identity: {
+        icon: 'shield-check',
+        iconBg: 'bg-green-100',
+        iconColor: 'text-green-600',
+        title: 'Identity verified',
+        message: 'You\'re confirmed! Nearly there now.',
+        nextLabel: 'Connect your bank',
+        nextDescription: 'Speed up verification with Open Banking.'
+      },
+      banking: {
+        icon: 'landmark',
+        iconBg: 'bg-green-100',
+        iconColor: 'text-green-600',
+        title: 'Bank connected',
+        message: 'Business details verified automatically.',
+        nextLabel: 'Review & submit',
+        nextDescription: 'Check everything looks good, then you\'re done!'
+      }
+    };
+
+    function renderMilestoneInterstitial() {
+      const milestone = milestones[state.showMilestone];
+      if (!milestone) return '';
+
+      const progressPercent = getProgressPercentage();
+
+      return `
+        <div class="min-h-screen bg-gradient-to-b from-[#0046ad] to-[#000c45] flex flex-col items-center justify-center px-6 py-12">
+          <div class="w-full max-w-md text-center space-y-6 fade-in">
+            <!-- Success Icon -->
+            <div class="flex justify-center">
+              <div class="w-20 h-20 rounded-full ${milestone.iconBg} flex items-center justify-center shadow-lg">
+                ${icon(milestone.icon, 'w-10 h-10 ' + milestone.iconColor)}
+              </div>
+            </div>
+
+            <!-- Celebration Text -->
+            <div class="space-y-2">
+              <h1 class="text-2xl font-bold text-white">${milestone.title}</h1>
+              <p class="text-white/80">${milestone.message}</p>
+            </div>
+
+            <!-- Progress indicator -->
+            <div class="bg-white/10 rounded-full px-4 py-2 inline-flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-green-400"></div>
+              <span class="text-white/90 text-sm font-medium">${progressPercent}% complete</span>
+            </div>
+
+            <!-- Next Step Preview -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-[20px] p-5 border border-white/20 text-left mt-8">
+              <p class="text-white/60 text-xs uppercase tracking-wider mb-2">Next up</p>
+              <h3 class="text-white font-bold text-lg mb-1">${milestone.nextLabel}</h3>
+              <p class="text-white/70 text-sm">${milestone.nextDescription}</p>
+            </div>
+
+            <!-- Continue Button -->
+            <button onclick="state.showMilestone=null;state.step++;render()" class="w-full h-[52px] rounded-full font-bold text-lg bg-white text-brand-navy hover:bg-white/90 transition-all shadow-lg flex items-center justify-center gap-2 mt-6">
+              Continue
+              ${icon('arrow-right', 'w-5 h-5')}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // =====================
+    // LAYOUT COMPONENTS
+    // =====================
+    function renderLayout(content, { currentStep, totalSteps, title, onBack }) {
+      const progressPercentage = Math.round((currentStep / totalSteps) * 100);
+      const timeRemaining = Math.max(1, Math.ceil((totalSteps - currentStep) * 0.4));
+
+      return `
+        <div class="min-h-screen bg-gradient-to-b from-[#0046ad] to-[#000c45] flex flex-col md:flex-row">
+          <!-- Left Sidebar -->
+          <div class="pt-12 px-6 pb-8 md:w-5/12 lg:w-1/3 md:h-screen md:pt-16 md:px-12 md:pb-12 md:flex md:flex-col md:justify-between relative overflow-hidden shrink-0">
+            <div class="relative z-10 w-full">
+              <!-- Nav Bar -->
+              <div class="flex items-center justify-between mb-8 md:mb-12">
+                <div class="flex items-center gap-3">
+                  ${onBack ? `<button onclick="prevStep()" class="text-white hover:bg-white/10 p-1 rounded-full transition-colors">${icon('chevron-left', 'w-6 h-6')}</button>` : ''}
+                  <h1 class="text-white text-base font-bold tracking-wide">${title}</h1>
+                </div>
+                <div class="flex items-center gap-2">
+                  <!-- Auto-save indicator -->
+                  <div class="hidden md:flex items-center gap-1.5 text-white/60 text-xs bg-white/5 px-2 py-1 rounded-full">
+                    ${icon('check', 'w-3 h-3')}
+                    <span>Saved</span>
+                  </div>
+                  <!-- Help button -->
+                  <button onclick="showHelpSheet()" class="w-9 h-9 flex items-center justify-center text-white/90 hover:text-white transition-all bg-white/15 hover:bg-white/25 rounded-full backdrop-blur-sm border border-white/20" aria-label="Get help">
+                    <span class="text-base font-bold">?</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Progress Section -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between text-xs font-bold text-white md:text-sm">
+                  <span>${progressPercentage}% Completed</span>
+                  <div class="flex items-center gap-1.5 bg-blue-900/30 px-2 py-1 rounded-md border border-white/10 text-blue-100 font-medium">
+                    ${icon('clock', 'w-3 h-3')}
+                    <span>~${timeRemaining} min left</span>
+                  </div>
+                </div>
+                <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
+                  <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-all duration-700 ease-out rounded-full" style="width: ${progressPercentage}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Desktop Footer -->
+            <div class="hidden md:block relative z-10 text-white/80 text-sm font-medium leading-relaxed max-w-xs">
+              <p>Need help? Call our business support line on <span class="text-white font-bold">0345 08 08 500</span></p>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div class="flex-1 rounded-t-[32px] md:rounded-none px-6 py-8 md:pb-12 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] md:shadow-none relative overflow-y-auto md:h-screen md:flex md:flex-col md:items-center bg-[#f1f5f9]">
+            <div class="w-full max-w-xl mx-auto md:py-8 h-full">
+              ${content}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStickyFooter(content) {
+      return `
+        <!-- Spacer -->
+        <div class="opacity-0 pointer-events-none md:hidden px-6 py-4 mt-auto" aria-hidden="true">${content}</div>
+        <!-- Fixed Footer -->
+        <div class="fixed bottom-0 left-0 right-0 z-50 bg-offwhite-50 px-6 py-4 pb-8 md:pb-4 transition-all duration-300 md:static md:bg-transparent md:border-0 md:p-0 md:mt-8 border-t border-[#E6E9ED]">
+          <div class="w-full max-w-xl mx-auto">${content}</div>
+        </div>
+      `;
+    }
+
+    // =====================
+    // SCREEN RENDERERS
+    // =====================
+
+    // Journey Selection (Step 0)
+    function renderJourneySelection() {
+      return `
+        <div class="min-h-screen bg-offwhite-50 flex flex-col">
+          <header class="bg-brand-navy py-4 px-6">
+            <div class="text-white font-bold text-lg tracking-tight">Metro Bank</div>
+          </header>
+
+          <main class="flex-1 px-6 py-6 max-w-md mx-auto w-full flex flex-col">
+            <h1 class="text-brand-navy font-bold text-2xl mb-1">Open a Business Account</h1>
+            <p class="text-text-secondary mb-6">Choose how you'd like to apply</p>
+
+            <div class="space-y-3 mb-6">
+              <!-- Ideal Card (Recommended) -->
+              <button onclick="state.journeyType = 'ideal'; render()" class="w-full text-left p-4 rounded-[16px] border-2 transition-all relative ${state.journeyType === 'ideal' ? 'bg-blue-50/50 border-brand-blue shadow-md ring-1 ring-brand-blue/20' : 'bg-white border-divider hover:border-brand-blue/50 hover:bg-slate-50'}">
+                ${state.journeyType === 'ideal' ? '<div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center shadow-md">' + icon('check', 'w-3.5 h-3.5 text-white') + '</div>' : ''}
+                <div class="flex items-start gap-3">
+                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${state.journeyType === 'ideal' ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                    ${state.journeyType === 'ideal' ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <h3 class="font-bold text-brand-navy">Fastest (~5 min)</h3>
+                      <span class="px-1.5 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase">Recommended</span>
+                    </div>
+                    <p class="text-text-secondary text-sm leading-relaxed">Passkey login + Open Banking. Skip the paperwork entirely.</p>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Optimised Card -->
+              <button onclick="state.journeyType = 'optimised'; render()" class="w-full text-left p-4 rounded-[16px] border-2 transition-all relative ${state.journeyType === 'optimised' ? 'bg-blue-50/50 border-brand-blue shadow-md ring-1 ring-brand-blue/20' : 'bg-white border-divider hover:border-brand-blue/50 hover:bg-slate-50'}">
+                ${state.journeyType === 'optimised' ? '<div class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center shadow-md">' + icon('check', 'w-3.5 h-3.5 text-white') + '</div>' : ''}
+                <div class="flex items-start gap-3">
+                  <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${state.journeyType === 'optimised' ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                    ${state.journeyType === 'optimised' ? '<div class="w-2 h-2 bg-white rounded-full"></div>' : ''}
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-bold text-brand-navy mb-1">Standard (~10 min)</h3>
+                    <p class="text-text-secondary text-sm leading-relaxed">Email verification + password. Open Banking optional.</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-[12px] border border-blue-100 mb-6">
+              ${icon('info', 'w-5 h-5 text-brand-blue shrink-0')}
+              <p class="text-xs text-brand-navy leading-relaxed">Both options give you the same business account. The "Fastest" option uses modern security (passkeys) and Open Banking to save you time.</p>
+            </div>
+
+            ${renderStickyFooter(`
+              <div class="space-y-3">
+                <button onclick="nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group">
+                  Get Started
+                  ${icon('arrow-right', 'w-4 h-4 group-hover:translate-x-1 transition-transform')}
+                </button>
+                <div class="text-center">
+                  <p class="text-text-secondary text-sm">Already have an account? <button onclick="showToast('Login feature')" class="text-brand-blue font-medium hover:underline">Log in</button></p>
+                </div>
+              </div>
+            `)}
+          </main>
+        </div>
+      `;
+    }
+
+    // Welcome Screen (Step 1)
+    function renderWelcome() {
+      const content = `
+        <div class="space-y-6">
+          <div class="space-y-3">
+            <h1 class="text-3xl font-bold text-brand-navy tracking-tight leading-tight">
+              Business banking, <span class="text-brand-blue">simplified.</span>
+            </h1>
+            <p class="text-text-secondary leading-relaxed">Open your account in minutes. No paperwork, just a streamlined digital flow.</p>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="font-bold text-brand-navy">What you'll need</h3>
+            <div class="space-y-2">
+              <div class="bg-white rounded-[14px] p-3.5 flex items-center gap-3 border border-divider">
+                <div class="w-10 h-10 rounded-[10px] bg-blue-50 flex items-center justify-center shrink-0">${icon('building', 'w-5 h-5 text-brand-blue')}</div>
+                <div><div class="font-medium text-brand-navy text-sm">Company details</div><div class="text-xs text-text-secondary">Company number or name</div></div>
+              </div>
+              <div class="bg-white rounded-[14px] p-3.5 flex items-center gap-3 border border-divider">
+                <div class="w-10 h-10 rounded-[10px] bg-indigo-50 flex items-center justify-center shrink-0">${icon('user', 'w-5 h-5 text-indigo-600')}</div>
+                <div><div class="font-medium text-brand-navy text-sm">Photo ID</div><div class="text-xs text-text-secondary">Passport or UK Driving Licence</div></div>
+              </div>
+              <div class="bg-white rounded-[14px] p-3.5 flex items-center gap-3 border border-divider">
+                <div class="w-10 h-10 rounded-[10px] bg-purple-50 flex items-center justify-center shrink-0">${icon('landmark', 'w-5 h-5 text-purple-600')}</div>
+                <div><div class="font-medium text-brand-navy text-sm">Existing bank account</div><div class="text-xs text-text-secondary">For Open Banking verification</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="font-bold text-brand-navy">Eligibility</h3>
+            <ul class="space-y-2 pl-1">
+              <li class="flex items-start gap-2.5 text-sm text-brand-navy">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-navy mt-2 shrink-0"></span>
+                <span>Registered UK Limited Company (Ltd)</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm text-brand-navy">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-navy mt-2 shrink-0"></span>
+                <span>Active and trading, or ready to trade</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-sm text-brand-navy">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-navy mt-2 shrink-0"></span>
+                <span>UK-based directors</span>
+              </li>
+            </ul>
+            <button onclick="showToast('Eligibility checker coming soon')" class="text-brand-blue text-sm font-medium hover:underline">
+              Not sure if you're eligible?
+            </button>
+          </div>
+
+          <!-- Name capture for personalization -->
+          <div class="space-y-2">
+            <label for="userName" class="text-sm font-medium text-brand-navy">What's your first name?</label>
+            <input type="text" id="userName" value="${state.userName}" oninput="state.userName=this.value" class="w-full h-12 px-4 rounded-[12px] border-2 border-divider focus:border-brand-blue outline-none text-base bg-white" placeholder="e.g. Sophie">
+            <p class="text-xs text-text-muted">We'll use this to personalize your experience</p>
+          </div>
+
+          <div class="flex items-center gap-3 p-3 bg-amber-50 rounded-[12px] border border-amber-200">
+            ${icon('clock', 'w-5 h-5 text-amber-600 shrink-0')}
+            <p class="text-sm text-amber-800"><span class="font-medium">Takes about ${state.journeyType === 'ideal' ? '5' : '10'} minutes</span> — you can save and resume anytime</p>
+          </div>
+
+          ${renderStickyFooter(`
+            <div class="space-y-3">
+              <button onclick="nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-all flex items-center justify-center gap-2 group shadow-lg shadow-brand-navy/20">
+                Start Application
+                ${icon('arrow-right', 'w-[18px] h-[18px] group-hover:translate-x-1 transition-transform')}
+              </button>
+              <button onclick="showToast('Resume feature — enter your email to continue')" class="w-full text-brand-navy font-medium text-sm hover:underline py-2">
+                Resume a saved application
+              </button>
+            </div>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 1, totalSteps: getTotalSteps(), title: 'Get Started', onBack: true });
+    }
+
+    // Company Search (Step 2)
+    function renderCompanySearch() {
+      const hasSearched = window.companySearched || false;
+      const query = window.companyQuery || '';
+
+      const content = `
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-brand-navy">${state.userName && !hasSearched ? `${getPersonalizedGreeting()} Let's find your business` : hasSearched ? 'Select your company' : 'Find your business'}</h2>
+            <p class="text-text-secondary">${hasSearched ? 'Select your company from the results' : 'Search by company name or registration number'}</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">
+              ${icon('search', 'w-5 h-5')}
+            </div>
+            <input type="text" id="companySearch" value="${query}" oninput="clearTimeout(window.searchTimeout);window.searchTimeout=setTimeout(()=>{if(this.value.length>=2){window.companySearched=true;window.companyQuery=this.value;render()}},500)" onkeydown="if(event.key==='Enter'&&this.value.length>=2){window.companySearched=true;window.companyQuery=this.value;render()}" class="w-full h-14 pl-12 pr-5 rounded-[16px] border-2 border-divider focus:border-brand-blue outline-none text-base bg-white" placeholder="e.g. Acme Ltd or 12345678" autofocus>
+          </div>
+
+          ${!hasSearched ? `
+            <div class="text-center py-8">
+              <p class="text-text-muted text-sm">Start typing to search Companies House</p>
+            </div>
+
+            ${renderStickyFooter(`
+              <button onclick="if(document.getElementById('companySearch').value.length>=2){window.companySearched=true;window.companyQuery=document.getElementById('companySearch').value;render()}" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                ${icon('search', 'w-5 h-5')}
+                Search
+              </button>
+            `)}
+          ` : (() => {
+            const filteredCompanies = mockCompanies.filter(c =>
+              c.name.toLowerCase().includes(query.toLowerCase()) ||
+              c.number.includes(query)
+            );
+            const hasResults = filteredCompanies.length > 0;
+
+            if (!hasResults) {
+              return `
+                <div class="space-y-4">
+                  <!-- Empty State -->
+                  <div class="text-center py-8 px-4">
+                    <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                      ${icon('search', 'w-7 h-7 text-slate-400')}
+                    </div>
+                    <h3 class="font-bold text-brand-navy text-lg mb-2">No companies found</h3>
+                    <p class="text-text-secondary text-sm mb-1">We couldn't find any companies matching "<span class="font-medium text-brand-navy">${query}</span>"</p>
+                    <p class="text-text-muted text-xs">Check your spelling or try a different search term</p>
+                  </div>
+
+                  <!-- Suggestions -->
+                  <div class="bg-slate-50 rounded-[14px] p-4 border border-dashed border-slate-300">
+                    <div class="flex items-center gap-2 text-text-secondary text-xs font-medium mb-3">
+                      ${icon('info', 'w-4 h-4')}
+                      <span>Search tips</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary">
+                      <li class="flex items-start gap-2">
+                        <span class="text-brand-navy">•</span>
+                        <span>Try searching by company number (e.g., 12345678)</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="text-brand-navy">•</span>
+                        <span>Use the full company name including "Ltd" or "Limited"</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button onclick="showToast('Manual company registration — coming soon')" class="w-full py-3 px-4 bg-white rounded-[14px] border border-divider hover:border-brand-blue transition-all text-left flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-[10px] bg-blue-50 flex items-center justify-center shrink-0">
+                      ${icon('plus', 'w-5 h-5 text-brand-blue')}
+                    </div>
+                    <div>
+                      <p class="font-medium text-brand-navy text-sm">Can't find your company?</p>
+                      <p class="text-text-muted text-xs">Enter details manually</p>
+                    </div>
+                  </button>
+
+                  <div class="pt-2 text-center">
+                    <button onclick="window.companySearched=false;window.companyQuery='';render()" class="text-brand-blue hover:underline text-sm font-medium">Clear search and try again</button>
+                  </div>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="space-y-3">
+                <p class="text-text-secondary text-sm font-medium">${filteredCompanies.length} ${filteredCompanies.length === 1 ? 'company' : 'companies'} found</p>
+
+                ${filteredCompanies.map(company => `
+                  <button onclick="state.selectedCompany=${JSON.stringify(company).replace(/"/g, '&quot;')};nextStep()" class="w-full text-left bg-white p-4 rounded-[16px] shadow-sm border border-divider hover:border-brand-blue hover:shadow-md group transition-all">
+                    <div class="flex justify-between items-center">
+                      <div class="flex-1">
+                        <h3 class="font-bold text-brand-navy">${toTitleCase(company.name)}</h3>
+                        <p class="text-text-muted font-mono text-sm mt-0.5">${company.number}</p>
+                        <p class="text-text-secondary text-sm mt-0.5">${company.address}</p>
+                      </div>
+                      <div class="text-brand-blue shrink-0 ml-3 group-hover:translate-x-1 transition-transform">
+                        ${icon('chevron-right', 'w-5 h-5')}
+                      </div>
+                    </div>
+                  </button>
+                `).join('')}
+
+                <button onclick="showToast('Manual company registration — coming soon')" class="w-full py-3 text-center text-brand-blue font-medium text-sm hover:underline">
+                  My company isn't listed
+                </button>
+
+                <div class="pt-2 text-center">
+                  <button onclick="window.companySearched=false;window.companyQuery='';render()" class="text-text-secondary hover:text-brand-navy text-sm font-medium">Search again</button>
+                </div>
+              </div>
+            `;
+          })()}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 2, totalSteps: getTotalSteps(), title: 'Find Business', onBack: true });
+    }
+
+    // Confirm Company (Step 3)
+    function renderConfirmCompany() {
+      if (!state.selectedCompany) return renderCompanySearch();
+
+      const content = `
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-brand-navy">Confirm your company</h2>
+          </div>
+
+          <div class="bg-white rounded-[20px] p-5 shadow-sm border border-divider">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-[12px] bg-offwhite-50 flex items-center justify-center shrink-0">
+                ${icon('building', 'w-6 h-6 text-brand-navy')}
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-brand-navy">${toTitleCase(state.selectedCompany.name)}</h3>
+                <p class="text-text-secondary text-sm">${state.selectedCompany.status} company</p>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-5 border-t border-divider space-y-4">
+              <div class="flex justify-between items-start">
+                <span class="text-text-secondary text-sm">Company number</span>
+                <span class="text-brand-navy font-mono font-medium text-sm">${state.selectedCompany.number}</span>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-text-secondary text-sm">Registered address</span>
+                <span class="text-brand-navy font-medium text-sm text-right max-w-[200px]">${state.selectedCompany.address}</span>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-text-secondary text-sm">Incorporated</span>
+                <span class="text-brand-navy font-medium text-sm">15 March 2020</span>
+              </div>
+              <div class="flex justify-between items-start">
+                <span class="text-text-secondary text-sm">Company type</span>
+                <span class="text-brand-navy font-medium text-sm">Private Limited Company</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-[14px] border border-slate-200">
+            ${icon('info', 'w-5 h-5 text-text-secondary shrink-0 mt-0.5')}
+            <p class="text-sm text-text-secondary">Information from <span class="font-medium text-brand-navy">Companies House</span>. Next: Tell us about your directors.</p>
+          </div>
+
+          ${renderStickyFooter(`
+            <div class="space-y-4">
+              <button onclick="state.directors=JSON.parse(JSON.stringify(mockDirectors));nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity">Confirm & Continue</button>
+              <button onclick="prevStep()" class="w-full text-brand-navy font-bold text-[16px] border border-divider hover:bg-offwhite-50 h-[48px] rounded-full transition-colors">This isn't my company</button>
+            </div>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 3, totalSteps: getTotalSteps(), title: 'Confirm Company', onBack: true });
+    }
+
+    // Directors List (Step 4)
+    function toggleDirectorExpand(id) {
+      window.expandedDirector = window.expandedDirector === id ? null : id;
+      render();
+    }
+
+    function setAsPrimaryHolder(id) {
+      state.directors = state.directors.map(d => ({
+        ...d,
+        isPrimaryHolder: d.id === id
+      }));
+      render();
+    }
+
+    function updateDirectorField(id, field, value) {
+      state.directors = state.directors.map(d =>
+        d.id === id ? { ...d, [field]: value } : d
+      );
+      // Don't re-render to avoid losing focus - update DOM directly
+      const input = document.getElementById(`director-${id}-${field}`);
+      if (input) input.value = value;
+    }
+
+    function skipDirector(id) {
+      state.directors = state.directors.filter(d => d.id !== id);
+      render();
+    }
+
+    function toggleAddPerson() {
+      window.showAddPersonForm = !window.showAddPersonForm;
+      window.newPersonName = '';
+      window.newPersonRole = 'Director';
+      window.newPersonEmail = '';
+      window.newPersonPhone = '';
+      render();
+    }
+
+    function addNewPerson() {
+      if (!window.newPersonName?.trim()) return;
+      const newId = Date.now().toString();
+      state.directors.push({
+        id: newId,
+        name: window.newPersonName.trim(),
+        role: window.newPersonRole || 'Director',
+        isPsc: false,
+        appointmentDate: 'Added now',
+        selected: false,
+        email: window.newPersonEmail || '',
+        phone: window.newPersonPhone || '',
+        isPrimaryHolder: false,
+        isManuallyAdded: true
+      });
+      window.showAddPersonForm = false;
+      render();
+    }
+
+    function renderDirectorsList() {
+      const hasPrimaryHolder = state.directors.some(d => d.isPrimaryHolder);
+      const expandedId = window.expandedDirector || null;
+
+      const content = `
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-brand-navy">${state.userName ? `${state.userName}, who's involved?` : "Who's involved?"}</h2>
+            <p class="text-text-secondary">We found ${state.directors.length} director${state.directors.length > 1 ? 's' : ''} from Companies House. Select who is applying for this account.</p>
+          </div>
+
+          ${!hasPrimaryHolder ? `
+            <div class="flex items-start gap-2 p-3 bg-amber-50 rounded-[12px] border border-amber-200">
+              ${icon('info', 'w-5 h-5 text-amber-600 shrink-0 mt-0.5')}
+              <p class="text-sm text-amber-800">Please select which person is you (the one applying for this account)</p>
+            </div>
+          ` : ''}
+
+          <div class="space-y-3">
+            ${state.directors.map((director, i) => `
+              <div class="rounded-[16px] bg-white transition-all duration-300 overflow-hidden border ${director.isPrimaryHolder ? 'border-2 border-brand-blue shadow-sm' : 'border border-divider'}">
+                <div class="p-4">
+                  <div class="flex items-start gap-3">
+                    <!-- "This is me" radio button -->
+                    <button onclick="setAsPrimaryHolder('${director.id}')" class="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${director.isPrimaryHolder ? 'border-brand-blue bg-brand-blue' : 'border-slate-400 hover:border-brand-blue'}">
+                      ${director.isPrimaryHolder ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                    </button>
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2">
+                        <div>
+                          <h3 class="font-bold text-brand-navy leading-tight">${toTitleCase(director.name)}</h3>
+                          <p class="text-text-secondary text-sm">${director.role}${director.isPsc ? ' • PSC' : ''}${director.isManuallyAdded ? ' • Added by you' : ''}</p>
+                        </div>
+                        ${director.isPrimaryHolder ? `
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-brand-blue/10 text-brand-blue text-xs font-bold shrink-0">
+                            This is me
+                          </span>
+                        ` : ''}
+                      </div>
+
+                      <!-- Contact details section -->
+                      <div class="mt-3 pt-3 border-t border-divider">
+                        ${director.isPrimaryHolder ? `
+                          <!-- Expanded form for primary holder -->
+                          <div class="space-y-3">
+                            <div>
+                              <label class="text-xs font-medium text-text-muted mb-1 block">Email address</label>
+                              <input type="email" id="director-${director.id}-email" value="${director.email || ''}" onchange="updateDirectorField('${director.id}', 'email', this.value)" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="e.g. sophie@business.co.uk">
+                            </div>
+                            <div>
+                              <label class="text-xs font-medium text-text-muted mb-1 block">Phone number</label>
+                              <input type="tel" id="director-${director.id}-phone" value="${director.phone || ''}" onchange="updateDirectorField('${director.id}', 'phone', this.value)" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="e.g. 07700 900 123">
+                            </div>
+                          </div>
+                        ` : `
+                          <!-- Collapsed view for non-primary -->
+                          <div class="space-y-2">
+                            ${director.email ? `
+                              <div class="flex items-center gap-2 text-sm">
+                                ${icon('mail', 'w-4 h-4 text-text-muted')}
+                                <span class="text-text-secondary">${director.email}</span>
+                              </div>
+                            ` : ''}
+                            ${director.phone ? `
+                              <div class="flex items-center gap-2 text-sm">
+                                ${icon('phone', 'w-4 h-4 text-text-muted')}
+                                <span class="text-text-secondary">${director.phone}</span>
+                              </div>
+                            ` : ''}
+                            ${!director.isManuallyAdded ? `
+                              <button onclick="skipDirector('${director.id}')" class="flex items-center gap-1.5 text-xs text-text-muted hover:text-red-500 transition-colors mt-1">
+                                <span>Skip this director</span>
+                              </button>
+                            ` : `
+                              <button onclick="skipDirector('${director.id}')" class="flex items-center gap-1.5 text-xs text-text-muted hover:text-red-500 transition-colors mt-1">
+                                <span>Remove</span>
+                              </button>
+                            `}
+                          </div>
+                        `}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+
+            <!-- Add someone else -->
+            ${window.showAddPersonForm ? `
+              <div class="rounded-[16px] bg-white border border-divider p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-brand-navy text-sm">Add someone else</h4>
+                  <button onclick="toggleAddPerson()" class="text-text-muted hover:text-brand-navy text-xs">Cancel</button>
+                </div>
+                <div class="space-y-3">
+                  <div>
+                    <label class="text-xs font-medium text-text-muted mb-1 block">Full name</label>
+                    <input type="text" id="new-person-name" value="${window.newPersonName || ''}" oninput="window.newPersonName=this.value" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="e.g. Sarah Johnson">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-text-muted mb-1 block">Role</label>
+                    <select id="new-person-role" onchange="window.newPersonRole=this.value" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white">
+                      <option value="Director" ${window.newPersonRole === 'Director' ? 'selected' : ''}>Director</option>
+                      <option value="Shareholder" ${window.newPersonRole === 'Shareholder' ? 'selected' : ''}>Shareholder</option>
+                      <option value="Secretary" ${window.newPersonRole === 'Secretary' ? 'selected' : ''}>Secretary</option>
+                      <option value="Beneficial Owner" ${window.newPersonRole === 'Beneficial Owner' ? 'selected' : ''}>Beneficial Owner</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-text-muted mb-1 block">Email address</label>
+                    <input type="email" id="new-person-email" value="${window.newPersonEmail || ''}" oninput="window.newPersonEmail=this.value" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="e.g. sarah@business.co.uk">
+                  </div>
+                  <div>
+                    <label class="text-xs font-medium text-text-muted mb-1 block">Phone number</label>
+                    <input type="tel" id="new-person-phone" value="${window.newPersonPhone || ''}" oninput="window.newPersonPhone=this.value" class="w-full h-10 px-3 rounded-[8px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="e.g. 07700 900 456">
+                  </div>
+                  <button onclick="addNewPerson()" class="w-full h-10 rounded-[8px] bg-brand-navy text-white font-medium text-sm hover:opacity-90 transition-opacity">
+                    Add person
+                  </button>
+                </div>
+              </div>
+            ` : `
+              <button onclick="toggleAddPerson()" class="w-full py-3 flex items-center justify-center gap-2 rounded-[14px] border border-dashed border-brand-navy/30 text-brand-navy font-medium text-sm hover:bg-offwhite-50 transition-all">
+                ${icon('plus', 'w-4 h-4')}
+                <span>Add someone else</span>
+              </button>
+            `}
+          </div>
+
+          ${renderStickyFooter(`
+            <button onclick="if(${hasPrimaryHolder}){nextStep()}" ${!hasPrimaryHolder ? 'disabled' : ''} class="w-full h-[48px] rounded-full font-bold text-[16px] transition-all shadow-lg flex items-center justify-center gap-2 ${hasPrimaryHolder ? 'bg-brand-navy text-white hover:opacity-90' : 'bg-divider text-text-secondary cursor-not-allowed shadow-none'}">
+              <span>Continue</span>
+              ${icon('arrow-right', 'w-4 h-4')}
+            </button>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 4, totalSteps: getTotalSteps(), title: 'Directors', onBack: true });
+    }
+
+    // Create Passkey (Step 5 - Ideal)
+    function renderCreatePasskey() {
+      const content = `
+        <div class="flex flex-col h-full relative">
+          <div class="space-y-6">
+            <div>
+              <h2 class="text-2xl font-bold text-brand-navy mb-2">Create your passkey</h2>
+              <p class="text-text-secondary leading-relaxed">Securely sign in without a password using your device's biometrics.</p>
+            </div>
+
+            <div class="flex justify-center py-6">
+              <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center relative">
+                <div class="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-20"></div>
+                ${icon('fingerprint', 'w-12 h-12 text-brand-blue')}
+                <div class="absolute -bottom-1 -right-1 bg-white p-1.5 rounded-full shadow-sm border border-divider">
+                  ${icon('shield-check', 'w-5 h-5 text-green-500')}
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4 bg-white rounded-[20px] p-5 border border-divider shadow-sm">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-offwhite-50 flex items-center justify-center shrink-0">
+                  ${icon('scan-face', 'w-5 h-5 text-brand-navy')}
+                </div>
+                <div>
+                  <h4 class="font-bold text-brand-navy text-sm">Use your fingerprint or face</h4>
+                  <p class="text-xs text-text-secondary">Works with Touch ID and Face ID</p>
+                </div>
+              </div>
+              <div class="w-full h-px bg-divider"></div>
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-offwhite-50 flex items-center justify-center shrink-0">
+                  ${icon('lock', 'w-5 h-5 text-brand-navy')}
+                </div>
+                <div>
+                  <h4 class="font-bold text-brand-navy text-sm">No password to remember</h4>
+                  <p class="text-xs text-text-secondary">Safer than a traditional password</p>
+                </div>
+              </div>
+              <div class="w-full h-px bg-divider"></div>
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-offwhite-50 flex items-center justify-center shrink-0">
+                  ${icon('zap', 'w-5 h-5 text-brand-navy')}
+                </div>
+                <div>
+                  <h4 class="font-bold text-brand-navy text-sm">Quick & easy process</h4>
+                  <p class="text-xs text-text-secondary">Log in in seconds</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          ${renderStickyFooter(`
+            <div class="space-y-3">
+              <button onclick="state.passkeyCreated=true;showToast('Passkey created successfully');nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-all shadow-lg shadow-brand-navy/20 flex items-center justify-center gap-2">
+                Create passkey
+              </button>
+              <button onclick="showToast('Password fallback flow')" class="w-full text-brand-navy font-bold text-[14px] hover:underline py-2">
+                Use password instead
+              </button>
+            </div>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 5, totalSteps: getTotalSteps(), title: 'Create Passkey', onBack: true });
+    }
+
+    // OTP Verification (Optimised flow)
+    function renderOTPVerification() {
+      const otpValues = window.otpValues || ['', '', '', '', '', ''];
+      const resendCount = window.otpResendCount || 0;
+
+      const handleOtpInput = (index, value) => {
+        if (value.length === 1 && /[0-9]/.test(value)) {
+          window.otpValues = window.otpValues || ['', '', '', '', '', ''];
+          window.otpValues[index] = value;
+
+          // Auto-focus next input
+          if (index < 5) {
+            document.getElementById('otp-' + (index + 1))?.focus();
+          }
+
+          // Auto-submit when all filled
+          if (window.otpValues.every(v => v !== '')) {
+            setTimeout(() => {
+              showToast('Code verified!');
+              nextStep();
+            }, 500);
+          }
+          render();
+        }
+      };
+
+      const content = `
+        <div class="flex flex-col h-full">
+          <div class="space-y-4 text-center">
+            <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto">
+              ${icon('mail', 'w-8 h-8 text-brand-blue')}
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-brand-navy mb-2">Check your email</h2>
+              <p class="text-text-secondary">We've sent a 6-digit code to<br><strong class="text-brand-navy">john.smith@example.com</strong></p>
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-center gap-2">
+            ${[0,1,2,3,4,5].map(i => `
+              <input type="text" id="otp-${i}" maxlength="1" inputmode="numeric" pattern="[0-9]" value="${otpValues[i]}" oninput="(${handleOtpInput.toString()})(${i}, this.value)" onkeydown="if(event.key==='Backspace'&&!this.value&&${i}>0){document.getElementById('otp-${i-1}').focus()}" class="w-12 h-14 text-center text-2xl font-bold rounded-[12px] border-2 ${otpValues[i] ? 'border-brand-blue bg-blue-50' : 'border-divider bg-white'} focus:border-brand-blue outline-none">
+            `).join('')}
+          </div>
+
+          <div class="mt-6 text-center space-y-3">
+            <button onclick="window.otpResendCount=(window.otpResendCount||0)+1;showToast('Code resent');render()" class="text-brand-blue font-medium text-sm hover:underline">
+              Resend code
+            </button>
+            ${resendCount > 0 ? `
+              <p class="text-xs text-text-muted">Didn't get it? Check your spam folder</p>
+            ` : ''}
+          </div>
+
+          <div class="mt-auto pt-8 text-center">
+            <button onclick="showToast('SMS verification')" class="text-text-secondary font-medium text-sm hover:text-brand-navy">
+              Send code via SMS instead
+            </button>
+          </div>
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 5, totalSteps: getTotalSteps(), title: 'Verify Email', onBack: true });
+    }
+
+    // Create Password (Optimised flow)
+    // Check if password requirements are met
+    function checkPasswordRequirements() {
+      const password = window.passwordValue || '';
+      const confirmPassword = window.confirmPasswordValue || '';
+
+      const requirements = [
+        { met: password.length >= 8 },
+        { met: /[A-Z]/.test(password) },
+        { met: /[a-z]/.test(password) },
+        { met: /[0-9]/.test(password) },
+        { met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+      ];
+
+      const allMet = requirements.every(r => r.met);
+      const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
+      return { allMet, passwordsMatch, isValid: allMet && passwordsMatch };
+    }
+
+    // Submit password and continue
+    function submitPassword() {
+      const { isValid } = checkPasswordRequirements();
+      if (isValid) {
+        showToast('Password created');
+        nextStep();
+      }
+    }
+
+    // Update validation UI without re-rendering (prevents focus loss)
+    function updatePasswordValidation() {
+      try {
+        const password = window.passwordValue || '';
+        const confirmPassword = window.confirmPasswordValue || '';
+
+        const requirements = [
+          { id: 'req-length', met: password.length >= 8 },
+          { id: 'req-upper', met: /[A-Z]/.test(password) },
+          { id: 'req-lower', met: /[a-z]/.test(password) },
+          { id: 'req-number', met: /[0-9]/.test(password) },
+          { id: 'req-special', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+        ];
+
+        const allMet = requirements.every(r => r.met);
+        const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
+        // Update each requirement indicator
+        requirements.forEach(req => {
+          const el = document.getElementById(req.id);
+          if (el) {
+            const iconEl = el.querySelector('.req-icon');
+            if (iconEl) {
+              if (req.met) {
+                el.className = 'flex items-center gap-2 text-sm text-green-600 transition-colors';
+                iconEl.className = 'req-icon w-4 h-4 rounded-full flex items-center justify-center bg-green-100';
+                iconEl.innerHTML = icon('check', 'w-3 h-3');
+              } else {
+                el.className = 'flex items-center gap-2 text-sm text-text-muted transition-colors';
+                iconEl.className = 'req-icon w-4 h-4 rounded-full flex items-center justify-center bg-slate-200';
+                iconEl.innerHTML = '';
+              }
+            }
+          }
+        });
+
+        // Update password input border
+        const pwInput = document.getElementById('password-input');
+        if (pwInput) {
+          const newPwClass = `w-full h-12 px-4 rounded-[12px] border-2 ${password && allMet ? 'border-green-500' : 'border-divider'} focus:border-brand-blue outline-none text-base bg-white transition-colors`;
+          if (pwInput.className !== newPwClass) pwInput.className = newPwClass;
+        }
+
+        // Update confirm password input border and error message
+        const confirmInput = document.getElementById('confirm-password-input');
+        const confirmError = document.getElementById('confirm-error');
+        if (confirmInput) {
+          const newConfirmClass = `w-full h-12 px-4 rounded-[12px] border-2 ${passwordsMatch ? 'border-green-500' : confirmPassword ? 'border-red-400' : 'border-divider'} focus:border-brand-blue outline-none text-base bg-white transition-colors`;
+          if (confirmInput.className !== newConfirmClass) confirmInput.className = newConfirmClass;
+        }
+        if (confirmError) {
+          confirmError.style.display = confirmPassword && !passwordsMatch ? 'block' : 'none';
+        }
+
+        // Update continue buttons (there are two due to sticky footer duplication)
+        const isValid = allMet && passwordsMatch;
+        document.querySelectorAll('.password-continue-btn').forEach(btn => {
+          btn.disabled = !isValid;
+          if (isValid) {
+            btn.style.backgroundColor = '#00338D';
+            btn.style.color = 'white';
+            btn.style.cursor = 'pointer';
+            btn.style.boxShadow = '0 10px 15px -3px rgba(0, 51, 141, 0.2)';
+          } else {
+            btn.style.backgroundColor = '#E2E8F0';
+            btn.style.color = '#64748B';
+            btn.style.cursor = 'not-allowed';
+            btn.style.boxShadow = 'none';
+          }
+        });
+      } catch (e) {
+        console.error('Password validation error:', e);
+      }
+    }
+
+    function renderCreatePassword() {
+      const password = window.passwordValue || '';
+      const confirmPassword = window.confirmPasswordValue || '';
+
+      const requirements = [
+        { id: 'req-length', label: 'At least 8 characters', met: password.length >= 8 },
+        { id: 'req-upper', label: 'One uppercase letter', met: /[A-Z]/.test(password) },
+        { id: 'req-lower', label: 'One lowercase letter', met: /[a-z]/.test(password) },
+        { id: 'req-number', label: 'One number', met: /[0-9]/.test(password) },
+        { id: 'req-special', label: 'One special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+      ];
+
+      const allMet = requirements.every(r => r.met);
+      const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
+      const content = `
+        <div class="space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-brand-navy mb-2">Create your password</h2>
+            <p class="text-text-secondary">This will be used to log in to your account.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-brand-navy mb-1.5 block" id="password-label">Password</label>
+              <input type="password" id="password-input" autocomplete="new-password" value="${password}" oninput="window.passwordValue=this.value;updatePasswordValidation()" class="w-full h-12 px-4 rounded-[12px] border-2 ${password && allMet ? 'border-green-500' : 'border-divider'} focus:border-brand-blue outline-none text-base bg-white transition-colors" placeholder="Enter password" aria-describedby="password-requirements">
+
+              <!-- Requirements shown below input with real-time validation -->
+              <div class="mt-3" role="group" aria-labelledby="password-label" aria-describedby="password-requirements">
+                <p id="password-requirements" class="sr-only">Password requirements</p>
+                <ul class="space-y-1">
+                  ${requirements.map(req => `
+                    <li id="${req.id}" class="flex items-center gap-2 text-sm ${req.met ? 'text-green-600' : 'text-text-muted'} transition-colors">
+                      <div class="req-icon w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${req.met ? 'bg-green-500' : 'bg-slate-200'}">
+                        ${req.met ? icon('check', 'w-2.5 h-2.5 text-white') : ''}
+                      </div>
+                      <span class="${req.met ? 'font-medium' : ''}">${req.label}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm font-medium text-brand-navy mb-1.5 block">Confirm password</label>
+              <input type="password" id="confirm-password-input" autocomplete="new-password" value="${confirmPassword}" oninput="window.confirmPasswordValue=this.value;updatePasswordValidation()" class="w-full h-12 px-4 rounded-[12px] border-2 ${passwordsMatch ? 'border-green-500' : confirmPassword ? 'border-red-400' : 'border-divider'} focus:border-brand-blue outline-none text-base bg-white transition-colors" placeholder="Re-enter password">
+              <p id="confirm-error" class="text-red-500 text-xs mt-1" style="display: ${confirmPassword && !passwordsMatch ? 'block' : 'none'}">Passwords don't match</p>
+            </div>
+          </div>
+
+          ${renderStickyFooter(`
+            <button ${!(allMet && passwordsMatch) ? 'disabled' : ''} class="password-continue-btn w-full h-[48px] rounded-full font-bold text-[16px] transition-all shadow-lg ${allMet && passwordsMatch ? 'bg-brand-navy text-white hover:opacity-90' : 'bg-divider text-text-secondary cursor-not-allowed shadow-none'}" onclick="submitPassword()">
+              Continue
+            </button>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Create Password', onBack: true });
+    }
+
+    // Trading Address (Optimised flow)
+    function renderTradingAddress() {
+      const addressType = state.tradingAddress || 'registered';
+
+      const content = `
+        <div class="space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-brand-navy mb-2">Trading address</h2>
+            <p class="text-text-secondary">Where does your business operate from?</p>
+          </div>
+
+          <div class="space-y-3">
+            <button onclick="state.tradingAddress='registered';render()" class="w-full py-4 px-5 rounded-[14px] border text-left transition-all ${addressType === 'registered' ? 'border-brand-blue bg-[#E5ECF5] shadow-sm' : 'border-divider bg-white hover:border-brand-blue/50'}">
+              <div class="flex items-start gap-3">
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${addressType === 'registered' ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                  ${addressType === 'registered' ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                </div>
+                <div>
+                  <span class="font-medium text-brand-navy block">Use registered address</span>
+                  <span class="text-sm text-text-secondary">${state.selectedCompany?.address || 'One Southampton Row, London, WC1B 5HA'}</span>
+                </div>
+              </div>
+            </button>
+
+            <button onclick="state.tradingAddress='different';render()" class="w-full py-4 px-5 rounded-[14px] border text-left transition-all ${addressType === 'different' ? 'border-brand-blue bg-[#E5ECF5] shadow-sm' : 'border-divider bg-white hover:border-brand-blue/50'}">
+              <div class="flex items-start gap-3">
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${addressType === 'different' ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                  ${addressType === 'different' ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                </div>
+                <div>
+                  <span class="font-medium text-brand-navy block">Enter a different address</span>
+                  <span class="text-sm text-text-secondary">You'll need proof of address</span>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          ${addressType === 'different' ? `
+            <div class="space-y-4 p-4 bg-slate-50 rounded-[14px] border border-slate-200">
+              <div>
+                <label class="text-sm font-medium text-brand-navy mb-1.5 block">Trading address</label>
+                <input type="text" class="w-full h-12 px-4 rounded-[12px] border border-divider focus:border-brand-blue outline-none text-base bg-white" placeholder="Start typing address...">
+              </div>
+
+              <div class="border-t border-slate-200 pt-4">
+                <p class="text-sm font-medium text-brand-navy mb-2">Upload proof of address</p>
+                <p class="text-xs text-text-muted mb-3">Accepted documents (dated within last 3 months):</p>
+                <ul class="text-xs text-text-secondary space-y-1 mb-4">
+                  <li>• Utility bill (gas, electric, water)</li>
+                  <li>• Bank statement</li>
+                  <li>• Council tax bill</li>
+                </ul>
+                <div class="flex gap-2">
+                  <button onclick="showToast('Camera capture')" class="flex-1 py-3 px-4 rounded-[10px] border border-divider bg-white text-sm font-medium text-brand-navy hover:bg-slate-50 flex items-center justify-center gap-2">
+                    ${icon('camera', 'w-4 h-4')}
+                    Take photo
+                  </button>
+                  <button onclick="showToast('File upload')" class="flex-1 py-3 px-4 rounded-[10px] border border-divider bg-white text-sm font-medium text-brand-navy hover:bg-slate-50 flex items-center justify-center gap-2">
+                    ${icon('arrow-right', 'w-4 h-4 rotate-90')}
+                    Upload file
+                  </button>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          ${renderStickyFooter(`
+            <button onclick="nextStep()" class="w-full h-[48px] rounded-full font-bold text-[16px] bg-brand-navy text-white hover:opacity-90 transition-all shadow-lg">
+              Continue
+            </button>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 9, totalSteps: getTotalSteps(), title: 'Trading Address', onBack: true });
+    }
+
+    // Business Activity Intro
+    function renderBusinessActivityIntro() {
+      const content = `
+        <div class="flex flex-col h-full">
+          <div class="space-y-6">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-[12px] bg-purple-100 flex items-center justify-center">
+                ${icon('building', 'w-6 h-6 text-purple-600')}
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h1 class="text-2xl font-bold leading-tight text-brand-navy">Tell us about your business</h1>
+              <p class="text-text-secondary leading-relaxed">A few quick questions to help us set up your account with the right features.</p>
+            </div>
+
+            <div class="bg-slate-50 rounded-[16px] p-4 border border-dashed border-slate-300 space-y-3">
+              <div class="flex items-center gap-2 text-text-secondary text-xs font-medium mb-1">
+                ${icon('info', 'w-4 h-4')}
+                <span>What we'll ask</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5 text-brand-blue font-bold text-sm">1</div>
+                <div>
+                  <h4 class="font-medium text-brand-navy">Business activity</h4>
+                  <p class="text-sm text-text-secondary">What your business does</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5 text-brand-blue font-bold text-sm">2</div>
+                <div>
+                  <h4 class="font-medium text-brand-navy">Expected transactions</h4>
+                  <p class="text-sm text-text-secondary">Turnover and payment types</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5 text-brand-blue font-bold text-sm">3</div>
+                <div>
+                  <h4 class="font-medium text-brand-navy">Banking needs</h4>
+                  <p class="text-sm text-text-secondary">How you'll use the account</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-[12px]">
+              ${icon('clock', 'w-5 h-5 text-text-secondary shrink-0')}
+              <p class="text-sm text-text-secondary">This section takes about <strong class="text-brand-navy">2 minutes</strong></p>
+            </div>
+          </div>
+
+          ${renderStickyFooter(`
+            <button onclick="nextStep()" class="w-full h-[48px] rounded-full font-bold text-[16px] bg-brand-navy text-white hover:opacity-90 transition-all shadow-lg flex items-center justify-center gap-2 group">
+              Let's go
+              ${icon('arrow-right', 'w-[18px] h-[18px] group-hover:translate-x-1 transition-transform')}
+            </button>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 10, totalSteps: getTotalSteps(), title: 'Business Details', onBack: true });
+    }
+
+    // Identity Verification (Step 6)
+    function renderIdentityVerification() {
+      const status = window.idStatus || 'select';
+
+      if (status === 'scanning') {
+        const content = `
+          <div class="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
+            <div class="relative w-24 h-24">
+              <div class="absolute inset-0 rounded-full border-4 border-brand-blue/30 animate-pulse"></div>
+              <div class="absolute inset-0 rounded-full border-t-4 border-brand-blue animate-spin"></div>
+              <div class="absolute inset-0 flex items-center justify-center">${icon('camera', 'w-8 h-8 text-brand-blue')}</div>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-brand-navy mb-2">Verifying document...</h3>
+              <p class="text-text-secondary">Please hold steady</p>
+            </div>
+          </div>
+        `;
+        return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
+      }
+
+      if (status === 'verified') {
+        // Auto-advance after 3 seconds
+        if (!window.idAutoAdvanceSet) {
+          window.idAutoAdvanceSet = true;
+          setTimeout(() => {
+            if (window.idStatus === 'verified') {
+              state.idVerification = {type: 'passport', status: 'verified'};
+              window.idStatus = 'select';
+              window.idAutoAdvanceSet = false;
+              nextStep();
+            }
+          }, 3000);
+        }
+
+        const content = `
+          <div class="flex flex-col items-center justify-center text-center pt-8 pb-12">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              ${icon('check', 'w-8 h-8 text-green-600')}
+            </div>
+            <h2 class="text-2xl font-bold text-brand-navy mb-2">Identity verified</h2>
+            <p class="text-text-secondary max-w-xs">Great! We've confirmed your identity. Let's continue with your application.</p>
+
+            <div class="mt-8 w-full max-w-xs bg-slate-50 rounded-[14px] p-4 text-left">
+              <p class="text-sm text-text-secondary">
+                <span class="font-medium text-brand-navy">Next:</span> Connect your existing business bank to speed up verification.
+              </p>
+            </div>
+
+            <p class="text-xs text-text-muted mt-4">Continuing automatically in 3 seconds...</p>
+
+            ${renderStickyFooter(`
+              <button onclick="window.idAutoAdvanceSet=false;state.idVerification={type:'passport',status:'verified'};window.idStatus='select';nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group">
+                Continue now
+                ${icon('arrow-right', 'w-4 h-4 group-hover:translate-x-1 transition-transform')}
+              </button>
+            `)}
+          </div>
+        `;
+        return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verified', onBack: true });
+      }
+
+      const content = `
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-brand-navy">Verify your identity</h2>
+            <p class="text-text-secondary">Quick photo verification — takes about 2 minutes.</p>
+          </div>
+
+          <div class="bg-slate-50 rounded-[14px] p-4 border border-slate-200">
+            <h4 class="font-medium text-brand-navy text-sm mb-2">Before you start</h4>
+            <ul class="space-y-1.5 text-sm text-text-secondary">
+              <li class="flex items-start gap-2">
+                ${icon('check', 'w-4 h-4 text-green-500 shrink-0 mt-0.5')}
+                <span>Have your passport or driving licence ready</span>
+              </li>
+              <li class="flex items-start gap-2">
+                ${icon('check', 'w-4 h-4 text-green-500 shrink-0 mt-0.5')}
+                <span>Find good lighting (natural light works best)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                ${icon('check', 'w-4 h-4 text-green-500 shrink-0 mt-0.5')}
+                <span>You'll take a quick selfie to match your photo</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-sm font-medium text-brand-navy">Choose your document</p>
+            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{window.idStatus='verified';render()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-[10px] bg-blue-50 flex items-center justify-center shrink-0">
+                  ${icon('camera', 'w-5 h-5 text-brand-blue')}
+                </div>
+                <div>
+                  <h3 class="font-medium text-brand-navy">Passport</h3>
+                  <p class="text-text-muted text-sm">Photo page</p>
+                </div>
+              </div>
+              ${icon('chevron-right', 'w-5 h-5 text-text-muted group-hover:text-brand-blue')}
+            </button>
+
+            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{window.idStatus='verified';render()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-[10px] bg-purple-50 flex items-center justify-center shrink-0">
+                  ${icon('credit-card', 'w-5 h-5 text-purple-600')}
+                </div>
+                <div>
+                  <h3 class="font-medium text-brand-navy">UK Driving Licence</h3>
+                  <p class="text-text-muted text-sm">Front and back</p>
+                </div>
+              </div>
+              ${icon('chevron-right', 'w-5 h-5 text-text-muted group-hover:text-brand-blue')}
+            </button>
+          </div>
+
+          <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-[12px]">
+            ${icon('shield-check', 'w-5 h-5 text-text-secondary shrink-0')}
+            <p class="text-xs text-text-secondary">Your photos are encrypted and processed securely. We use them only to verify your identity.</p>
+          </div>
+
+          <div class="text-center">
+            <button onclick="showToast('Contact support to complete verification by post')" class="text-text-secondary font-medium text-sm hover:text-brand-navy">
+              I don't have these documents →
+            </button>
+          </div>
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
+    }
+
+    // Connect Bank Intro (Step 7)
+    function renderConnectBankIntro() {
+      const content = `
+        <div class="flex flex-col h-full">
+          <div class="space-y-5">
+            <!-- Security reassurance FIRST -->
+            <div class="bg-green-50 rounded-[16px] p-4 border border-green-200">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                  ${icon('shield-check', 'w-5 h-5 text-green-600')}
+                </div>
+                <div>
+                  <p class="font-bold text-green-800 text-sm">Read-only access</p>
+                  <p class="text-green-700 text-xs">We can view transactions but can't move your money</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div class="space-y-2">
+              <h1 class="text-2xl font-bold leading-tight text-brand-navy">Connect your bank</h1>
+              <p class="text-text-secondary">Skip the paperwork — we'll verify your business details automatically.</p>
+            </div>
+
+            <!-- Two key benefits only -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 bg-white p-3 rounded-[12px] border border-divider">
+                <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                  ${icon('zap', 'w-4 h-4 text-brand-blue')}
+                </div>
+                <div>
+                  <p class="font-medium text-brand-navy text-sm">Saves ~5 minutes</p>
+                  <p class="text-text-muted text-xs">No manual entry of business details</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 bg-white p-3 rounded-[12px] border border-divider">
+                <div class="w-9 h-9 rounded-full bg-purple-50 flex items-center justify-center shrink-0">
+                  ${icon('check-circle', 'w-4 h-4 text-purple-600')}
+                </div>
+                <div>
+                  <p class="font-medium text-brand-navy text-sm">Faster approval</p>
+                  <p class="text-text-muted text-xs">Instant verification of your business</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trust badges - bank logos -->
+            <div class="pt-2">
+              <p class="text-text-muted text-xs text-center mb-3">Works with all major UK banks</p>
+              <div class="flex justify-center items-center gap-2 flex-wrap">
+                ${banks.slice(0, 6).map(bank => `
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center ${bank.color} shadow-sm">
+                    <svg class="w-5 h-5"><use href="#bank-${bank.logo}"/></svg>
+                  </div>
+                `).join('')}
+                <span class="text-text-muted text-xs ml-1">+more</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-auto pt-6">
+            <!-- FCA badge -->
+            <div class="flex items-center justify-center gap-2 text-xs text-text-muted font-medium mb-4 bg-slate-50 py-2 px-3 rounded-full mx-auto w-fit">
+              ${icon('lock', 'w-3 h-3')}
+              <span>FCA regulated • 256-bit encryption</span>
+            </div>
+
+            ${renderStickyFooter(`
+              <div class="space-y-3">
+                <button onclick="nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-navy/20 group">
+                  Connect my bank
+                  ${icon('arrow-right', 'w-[18px] h-[18px] group-hover:translate-x-1 transition-transform')}
+                </button>
+                <button onclick="showToast('Manual entry mode — you\'ll need to answer a few more questions')" class="w-full h-[44px] rounded-full font-medium text-[15px] border-2 border-slate-300 text-brand-navy bg-white hover:bg-slate-50 hover:border-slate-400 transition-all flex items-center justify-center gap-2">
+                  Skip — enter details manually
+                </button>
+              </div>
+            `)}
+          </div>
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 7, totalSteps: getTotalSteps(), title: 'Connect Bank', onBack: true });
+    }
+
+    // Open Banking - Select Bank (Step 8)
+    function renderOpenBanking() {
+      const selectedBank = window.selectedBank || null;
+      const isConnecting = window.isConnecting || false;
+
+      if (isConnecting) {
+        const content = `
+          <div class="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6 fade-in">
+            <div class="w-16 h-16 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
+            <div>
+              <h3 class="text-xl font-bold text-brand-navy mb-2">Connecting to ${selectedBank}...</h3>
+              <p class="text-text-secondary">Please wait while we verify your details</p>
+            </div>
+          </div>
+        `;
+        return renderLayout(content, { currentStep: 8, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
+      }
+
+      const bankFilter = window.bankFilter || '';
+      const filteredBanks = banks.filter(b => b.name.toLowerCase().includes(bankFilter.toLowerCase()));
+
+      const content = `
+        <div class="flex flex-col h-full relative">
+          <div class="space-y-4 mb-4">
+            <div>
+              <h2 class="text-2xl font-bold text-brand-navy">Select your bank</h2>
+              <p class="text-text-secondary">Choose your current business bank to connect.</p>
+            </div>
+
+            <div class="relative">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
+                ${icon('search', 'w-4 h-4')}
+              </div>
+              <input type="text" value="${bankFilter}" oninput="window.bankFilter=this.value;render()" class="w-full h-11 pl-10 pr-4 rounded-[12px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="Search banks...">
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-y-auto -mx-2 px-2 pb-32 no-scrollbar space-y-1.5">
+            ${filteredBanks.map(bank => `
+              <button onclick="window.selectedBank='${bank.name}';render()" class="w-full flex items-center py-3 px-3 border rounded-[12px] transition-all ${selectedBank === bank.name ? 'border-brand-blue bg-blue-50' : 'border-transparent bg-white hover:bg-slate-50'}">
+                <svg class="w-9 h-9 rounded-full shrink-0 mr-3 overflow-hidden"><use href="#bank-${bank.logo}"/></svg>
+                <span class="font-medium flex-1 text-left text-brand-navy">${bank.name}</span>
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedBank === bank.name ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                  ${selectedBank === bank.name ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                </div>
+              </button>
+            `).join('')}
+
+            ${filteredBanks.length === 0 ? `
+              <div class="text-center py-8">
+                <p class="text-text-muted text-sm">No banks found matching "${bankFilter}"</p>
+                <button onclick="window.bankFilter='';render()" class="text-brand-blue text-sm font-medium mt-2 hover:underline">Clear search</button>
+              </div>
+            ` : ''}
+
+            <button onclick="showToast('Contact support for help with your bank')" class="w-full py-3 text-center text-text-secondary font-medium text-sm hover:text-brand-navy mt-2">
+              My bank isn't listed
+            </button>
+          </div>
+
+          ${renderStickyFooter(`
+            <div class="space-y-3">
+              <button onclick="if(!window.selectedBank)return;window.isConnecting=true;render();setTimeout(()=>{state.selectedBank=window.selectedBank;state.openBanking={provider:window.selectedBank,connected:true};window.isConnecting=false;window.selectedBank=null;nextStep()},2000)" ${!selectedBank ? 'disabled' : ''} class="w-full h-[48px] rounded-full font-bold text-[16px] bg-brand-navy text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-all shadow-lg shadow-brand-navy/20 disabled:shadow-none flex items-center justify-center gap-2 group">
+                Continue to ${selectedBank || 'bank'}
+                ${icon('arrow-right', 'w-[18px] h-[18px] group-hover:translate-x-1 transition-transform')}
+              </button>
+              <p class="text-center text-xs text-text-muted">You'll be redirected to log in securely</p>
+            </div>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: 8, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
+    }
+
+    // Review Application (Step 9)
+    function renderReview() {
+      const agreed = window.termsAgreed || false;
+
+      const content = `
+        <div class="space-y-5">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-brand-navy">Review your application</h2>
+            <p class="text-text-secondary">Check everything is correct before submitting.</p>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Company Details -->
+            <div class="bg-white rounded-[16px] shadow-sm border border-divider overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-divider bg-slate-50">
+                <h3 class="font-bold text-brand-navy text-sm">Company details</h3>
+                <button onclick="goToStep(3)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
+                  ${icon('pencil', 'w-4 h-4')}
+                </button>
+              </div>
+              <div class="p-4 space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Name</span>
+                  <span class="font-medium text-brand-navy">${toTitleCase(state.selectedCompany?.name || 'Metro Bank Plc')}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-text-secondary">Company number</span>
+                  <span class="font-medium text-brand-navy font-mono">${state.selectedCompany?.number || '10261677'}</span>
+                </div>
+                <div class="flex justify-between items-start">
+                  <span class="text-text-secondary">Registered address</span>
+                  <span class="font-medium text-brand-navy text-right max-w-[180px]">${state.selectedCompany?.address || 'One Southampton Row, London, WC1B 5HA'}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Directors -->
+            <div class="bg-white rounded-[16px] shadow-sm border border-divider overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-divider bg-slate-50">
+                <h3 class="font-bold text-brand-navy text-sm">Directors</h3>
+                <button onclick="goToStep(4)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
+                  ${icon('pencil', 'w-4 h-4')}
+                </button>
+              </div>
+              <div class="p-4 space-y-3">
+                ${(state.directors.length > 0 ? state.directors : mockDirectors).map(d => `
+                  <div class="flex justify-between items-center text-sm">
+                    <div>
+                      <p class="font-medium text-brand-navy">${toTitleCase(d.name)}</p>
+                      <p class="text-text-muted text-xs">${d.role}${d.isPrimaryHolder ? ' • Applying' : ''}</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
+                      ${icon('check', 'w-3 h-3')}
+                      Verified
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Bank Connection (if applicable) -->
+            ${state.openBanking?.connected ? `
+              <div class="bg-white rounded-[16px] shadow-sm border border-divider overflow-hidden">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-divider bg-slate-50">
+                  <h3 class="font-bold text-brand-navy text-sm">Bank connection</h3>
+                </div>
+                <div class="p-4 flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    ${icon('check', 'w-4 h-4')}
+                  </div>
+                  <div>
+                    <p class="font-medium text-brand-navy text-sm">${state.openBanking.provider} connected</p>
+                    <p class="text-text-muted text-xs">Business details verified via Open Banking</p>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- What happens next -->
+          <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-[14px] border border-blue-100">
+            ${icon('info', 'w-5 h-5 text-brand-blue shrink-0 mt-0.5')}
+            <div class="text-sm">
+              <p class="font-medium text-brand-navy">What happens next?</p>
+              <p class="text-text-secondary mt-1">We'll review your application and email you within 1 business day. Your account will be ready to use immediately upon approval.</p>
+            </div>
+          </div>
+
+          <!-- Terms Checkbox -->
+          <div class="bg-white rounded-[16px] p-4 border border-divider">
+            <label for="terms-checkbox" class="flex items-start gap-3 cursor-pointer">
+              <div class="relative flex items-center mt-0.5">
+                <input
+                  type="checkbox"
+                  id="terms-checkbox"
+                  name="terms-agreement"
+                  ${agreed ? 'checked' : ''}
+                  onchange="window.termsAgreed=this.checked;render()"
+                  class="sr-only peer"
+                  aria-describedby="terms-description"
+                >
+                <div class="h-5 w-5 rounded border-2 peer-focus:ring-2 peer-focus:ring-brand-blue/30 peer-focus:ring-offset-1 ${agreed ? 'border-brand-blue bg-brand-blue' : 'border-slate-400 bg-white'} transition-all flex items-center justify-center">
+                  ${agreed ? icon('check', 'w-3 h-3 text-white') : ''}
+                </div>
+              </div>
+              <span id="terms-description" class="text-sm text-text-secondary leading-relaxed">
+                I confirm the information is accurate and agree to the:
+              </span>
+            </label>
+            <div class="ml-8 mt-2 flex flex-wrap gap-x-3 gap-y-1">
+              <a href="#" class="text-brand-blue font-medium text-sm hover:underline py-1" onclick="event.stopPropagation()">Terms & Conditions</a>
+              <span class="text-text-muted">•</span>
+              <a href="#" class="text-brand-blue font-medium text-sm hover:underline py-1" onclick="event.stopPropagation()">Privacy Policy</a>
+            </div>
+          </div>
+
+          ${renderStickyFooter(`
+            <div class="space-y-2">
+              ${!agreed ? '<p class="text-amber-600 text-xs text-center font-medium">Please agree to the terms above to continue</p>' : ''}
+              <button onclick="if(!window.termsAgreed){document.getElementById('terms-checkbox').focus();return}showToast('Application submitted!');setTimeout(()=>nextStep(),1500)" ${!agreed ? 'disabled aria-disabled="true"' : ''} class="w-full h-[48px] rounded-full font-bold text-[16px] transition-all ${agreed ? 'bg-brand-navy text-white hover:opacity-90 shadow-lg shadow-brand-navy/20' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                Submit Application
+              </button>
+            </div>
+          `)}
+        </div>
+      `;
+      const reviewStep = state.journeyType === 'optimised' ? 19 : 9;
+      return renderLayout(content, { currentStep: reviewStep, totalSteps: getTotalSteps(), title: 'Review', onBack: true });
+    }
+
+    // Dashboard / Success (Step 10)
+    function renderDashboard() {
+      const sortCode = '04-00-75';
+      const accountNumber = '12345678';
+      const companyName = toTitleCase(state.selectedCompany?.name || 'Metro Bank Plc');
+
+      return `
+        <div class="flex flex-col min-h-screen bg-offwhite-50 relative font-sans">
+          <!-- Success Header -->
+          <div class="pt-12 pb-6 px-6 flex flex-col items-center text-center">
+            <div class="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center mb-4 shadow-lg shadow-green-500/30 fade-in">
+              ${icon('check', 'w-7 h-7 text-white')}
+            </div>
+            <h1 class="text-2xl font-bold text-brand-navy mb-1 tracking-tight fade-in">You're all set!</h1>
+            <p class="text-text-secondary text-sm font-medium max-w-xs mx-auto leading-relaxed fade-in">Your business account is active and ready to use.</p>
+          </div>
+
+          <!-- Card Section -->
+          <div class="flex-1 px-6 flex flex-col items-center pb-24">
+            <!-- Account Details Card -->
+            <div class="w-full max-w-sm bg-white rounded-[20px] shadow-lg overflow-hidden border border-divider fade-in">
+              <div class="bg-gradient-to-r from-brand-navy to-brand-blue p-4 text-white">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-bold text-sm">Metro Bank Business</span>
+                  <div class="flex relative">
+                    <div class="w-6 h-6 rounded-full bg-[#EB001B]/90"></div>
+                    <div class="w-6 h-6 rounded-full bg-[#F79E1B]/90 -ml-2"></div>
+                  </div>
+                </div>
+                <p class="text-white/80 text-xs">${companyName}</p>
+              </div>
+
+              <div class="p-4 space-y-3">
+                <div class="flex items-center justify-between py-2 border-b border-divider">
+                  <div>
+                    <p class="text-text-muted text-xs uppercase tracking-wider">Sort code</p>
+                    <p class="font-mono font-bold text-brand-navy">${sortCode}</p>
+                  </div>
+                  <button onclick="navigator.clipboard.writeText('${sortCode.replace(/-/g, '')}');showToast('Sort code copied')" class="text-brand-blue hover:bg-blue-50 p-2 rounded-full transition-colors">
+                    ${icon('copy', 'w-4 h-4')}
+                  </button>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                  <div>
+                    <p class="text-text-muted text-xs uppercase tracking-wider">Account number</p>
+                    <p class="font-mono font-bold text-brand-navy">${accountNumber}</p>
+                  </div>
+                  <button onclick="navigator.clipboard.writeText('${accountNumber}');showToast('Account number copied')" class="text-brand-blue hover:bg-blue-50 p-2 rounded-full transition-colors">
+                    ${icon('copy', 'w-4 h-4')}
+                  </button>
+                </div>
+              </div>
+
+              <div class="px-4 pb-4">
+                <button onclick="navigator.clipboard.writeText('Sort code: ${sortCode}\\nAccount number: ${accountNumber}\\nName: ${companyName}');showToast('Account details copied')" class="w-full py-2.5 rounded-[10px] bg-slate-50 text-brand-navy font-medium text-sm hover:bg-slate-100 transition-colors flex items-center justify-center gap-2">
+                  ${icon('copy', 'w-4 h-4')}
+                  Copy all account details
+                </button>
+              </div>
+            </div>
+
+            <!-- What happens next -->
+            <div class="mt-5 w-full max-w-sm fade-in">
+              <div class="bg-white rounded-[16px] p-4 border border-divider shadow-sm">
+                <h3 class="text-brand-navy font-bold text-sm mb-3">What happens next</h3>
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
+                      ${icon('check', 'w-3 h-3 text-green-600')}
+                    </div>
+                    <div>
+                      <p class="text-sm text-brand-navy font-medium">Account is active</p>
+                      <p class="text-xs text-text-secondary">You can start receiving payments now</p>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                      ${icon('credit-card', 'w-3 h-3 text-brand-blue')}
+                    </div>
+                    <div>
+                      <p class="text-sm text-brand-navy font-medium">Card on the way</p>
+                      <p class="text-xs text-text-secondary">Arrives in 3-5 working days</p>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 mt-0.5">
+                      ${icon('smartphone', 'w-3 h-3 text-purple-600')}
+                    </div>
+                    <div>
+                      <p class="text-sm text-brand-navy font-medium">Download the app</p>
+                      <p class="text-xs text-text-secondary">Manage your account on the go</p>
+                    </div>
+                  </li>
+                  ${state.directors.length > 1 ? `
+                  <li class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                      ${icon('user', 'w-3 h-3 text-amber-600')}
+                    </div>
+                    <div>
+                      <p class="text-sm text-brand-navy font-medium">Invite other directors</p>
+                      <p class="text-xs text-text-secondary">They'll receive an email to set up access</p>
+                    </div>
+                  </li>
+                  ` : ''}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Button -->
+          ${renderStickyFooter(`
+            <button onclick="location.reload()" class="w-full h-[48px] rounded-full font-bold text-[16px] bg-brand-navy text-white hover:bg-brand-navy/90 active:scale-[0.99] transition-all shadow-lg shadow-brand-navy/20 flex items-center justify-center gap-2 group">
+              Go to Dashboard
+              ${icon('arrow-right', 'w-5 h-5 group-hover:translate-x-1 transition-transform')}
+            </button>
+          `)}
+        </div>
+      `;
+    }
+
+    // =====================
+    // MAIN RENDER FUNCTION
+    // =====================
+    function render() {
+      const app = document.getElementById('app');
+
+      // Show milestone interstitial if active
+      if (state.showMilestone) {
+        app.innerHTML = renderMilestoneInterstitial();
+        return;
+      }
+
+      // Journey Selection
+      if (state.step === 0) {
+        app.innerHTML = renderJourneySelection();
+        return;
+      }
+
+      // Ideal Flow (10 steps)
+      if (state.journeyType === 'ideal') {
+        switch (state.step) {
+          case 1: app.innerHTML = renderWelcome(); break;
+          case 2: app.innerHTML = renderCompanySearch(); break;
+          case 3: app.innerHTML = renderConfirmCompany(); break;
+          case 4: app.innerHTML = renderDirectorsList(); break;
+          case 5: app.innerHTML = renderCreatePasskey(); break;
+          case 6: app.innerHTML = renderIdentityVerification(); break;
+          case 7: app.innerHTML = renderConnectBankIntro(); break;
+          case 8: app.innerHTML = renderOpenBanking(); break;
+          case 9: app.innerHTML = renderReview(); break;
+          case 10: app.innerHTML = renderDashboard(); break;
+          default: app.innerHTML = renderWelcome();
+        }
+        return;
+      }
+
+      // Optimised Flow (20 steps)
+      if (state.journeyType === 'optimised') {
+        switch (state.step) {
+          case 1: app.innerHTML = renderWelcome(); break;
+          case 2: app.innerHTML = renderCompanySearch(); break;
+          case 3: app.innerHTML = renderConfirmCompany(); break;
+          case 4: app.innerHTML = renderDirectorsList(); break;
+          case 5: app.innerHTML = renderOTPVerification(); break;
+          case 6: app.innerHTML = renderCreatePassword(); break;
+          case 7: app.innerHTML = renderIdentityVerification(); break;
+          case 8: app.innerHTML = renderTradingAddress(); break;
+          case 9: app.innerHTML = renderConnectBankIntro(); break;
+          case 10: app.innerHTML = renderOpenBanking(); break;
+          case 11: app.innerHTML = renderBusinessActivityIntro(); break;
+          case 12:
+          case 13:
+          case 14:
+          case 15:
+          case 16:
+          case 17:
+          case 18:
+            // Question screens
+            app.innerHTML = renderQuestionScreen();
+            break;
+          case 19: app.innerHTML = renderReview(); break;
+          case 20: app.innerHTML = renderDashboard(); break;
+          default: app.innerHTML = renderWelcome();
+        }
+      }
+    }
+
+    // Question Screen (for optimised flow)
+    function renderQuestionScreen() {
+      const questionData = {
+        12: {
+          title: 'Annual Turnover',
+          subtitle: 'What is your expected annual turnover?',
+          help: 'This helps us recommend the right account features.',
+          options: ['£0 – £250k', '£250k – £1M', '£1M – £5M', '£5M+']
+        },
+        13: {
+          title: 'Number of Employees',
+          subtitle: 'How many people work in your business?',
+          help: 'Include yourself and any part-time staff.',
+          options: ['Just me (1)', '2–5 employees', '6–10 employees', '11–50 employees', '50+ employees']
+        },
+        14: {
+          title: 'International Payments',
+          subtitle: 'Will you send or receive payments outside the UK?',
+          help: 'This includes payments to suppliers, freelancers, or customers abroad.',
+          options: ['Yes, regularly', 'No', 'Occasionally']
+        },
+        15: {
+          title: 'Revenue Sources',
+          subtitle: 'How does your business earn money?',
+          help: 'Select all that apply to your primary income.',
+          options: [
+            { label: 'Invoices to clients', desc: 'B2B services, consulting, freelance work' },
+            { label: 'Online sales / e-commerce', desc: 'Selling products through your website or marketplace' },
+            { label: 'Subscriptions / recurring', desc: 'Monthly or annual subscription fees' },
+            { label: 'Other', desc: 'Specify your revenue source', hasTextField: true }
+          ],
+          hasDescriptions: true
+        },
+        16: {
+          title: 'Website',
+          subtitle: 'Do you have a business website?',
+          options: ['Yes', 'No', 'Setting one up']
+        },
+        17: {
+          title: 'Monthly Income',
+          subtitle: "What's your expected monthly income?",
+          help: 'An estimate is fine — this helps us set up your account correctly.',
+          options: ['Under £10k', '£10k – £50k', '£50k – £100k', '£100k+']
+        },
+        18: {
+          title: 'Cash Deposits',
+          subtitle: 'Will you deposit cash (notes and coins) into this account?',
+          help: 'This does not include card payments or bank transfers.',
+          options: ['No cash deposits', 'Small amounts (up to £3k/month)', 'Medium amounts (£3k–£10k/month)', 'Large amounts (over £10k/month)']
+        }
+      };
+
+      const q = questionData[state.step] || questionData[12];
+      const selected = window[`q${state.step}`] || null;
+
+      const content = `
+        <div class="flex flex-col h-full min-h-[60vh]">
+          <div class="space-y-2 mb-6">
+            <h2 class="text-2xl font-bold text-brand-navy">${q.title}</h2>
+            <p class="text-text-secondary">${q.subtitle}</p>
+            ${q.help ? `<p class="text-sm text-text-muted">${q.help}</p>` : ''}
+          </div>
+
+          <div class="flex-1 space-y-2">
+            ${q.hasDescriptions ? q.options.map(opt => `
+              <button onclick="window['q${state.step}']='${opt.label.replace(/'/g, "\\'")}';render()" class="w-full py-4 px-5 rounded-[14px] border text-left flex items-center justify-between transition-all ${selected === opt.label ? 'border-brand-blue bg-[#E5ECF5] shadow-sm' : 'border-divider bg-white hover:border-brand-blue/50'}">
+                <div class="flex-1">
+                  <span class="font-medium text-base block ${selected === opt.label ? 'text-brand-navy' : 'text-text-secondary'}">${opt.label}</span>
+                  <span class="text-xs text-text-muted">${opt.desc}</span>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ml-3 ${selected === opt.label ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                  ${selected === opt.label ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                </div>
+              </button>
+              ${opt.hasTextField && selected === opt.label ? `
+                <div class="ml-4 mt-2">
+                  <input type="text" id="otherInput" value="${window.otherValue || ''}" oninput="window.otherValue=this.value" class="w-full h-11 px-4 rounded-[10px] border border-divider focus:border-brand-blue outline-none text-sm bg-white" placeholder="Please specify...">
+                </div>
+              ` : ''}
+            `).join('') : q.options.map(opt => `
+              <button onclick="window['q${state.step}']='${opt.replace(/'/g, "\\'")}';render()" class="w-full py-4 px-5 rounded-[14px] border text-left flex items-center justify-between transition-all ${selected === opt ? 'border-brand-blue bg-[#E5ECF5] shadow-sm' : 'border-divider bg-white hover:border-brand-blue/50'}">
+                <span class="font-medium text-base ${selected === opt ? 'text-brand-navy' : 'text-text-secondary'}">${opt}</span>
+                <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selected === opt ? 'border-brand-blue bg-brand-blue' : 'border-slate-400'}">
+                  ${selected === opt ? `<div class="w-2 h-2 bg-white rounded-full"></div>` : ''}
+                </div>
+              </button>
+            `).join('')}
+          </div>
+
+          ${renderStickyFooter(`
+            <button onclick="if(!window['q${state.step}'])return;nextStep()" ${!selected ? 'disabled' : ''} class="w-full h-[48px] rounded-full font-bold text-[16px] transition-all shadow-lg ${selected ? 'bg-brand-navy text-white hover:opacity-90' : 'bg-divider text-text-secondary cursor-not-allowed shadow-none'}">
+              Next →
+            </button>
+          `)}
+        </div>
+      `;
+      return renderLayout(content, { currentStep: state.step, totalSteps: getTotalSteps(), title: 'Business Details', onBack: true });
+    }
+
+    // Initialize
+    render();
+  </script>
+</body>
+</html>
