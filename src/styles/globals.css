@@ -1,0 +1,302 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Cashflow Coach Style - Brand Colors */
+  --brand-primary-navy: #012B72;
+  --brand-blue: #0041AD;
+  --brand-red: #ED0322;
+  
+  /* Supporting Colors */
+  --blue-300: #6995E6;
+  --blue-100: #DAE7FA;
+  --blue-50: #EBF0F8;
+  --green-500: #1EB980;
+  --orange-400: #FF9A5A;
+  --purple-600: #7C3AED;
+  --purple-50: #F5F3FF;
+  --offwhite-50: #F5F7FB;
+  --offwhite-75: #F1F6FC;
+  --white: #FFFFFF;
+  
+  /* Extended Color Palette */
+  --emerald-50: #ECFDF5;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+  --amber-50: #FFFBEB;
+  --amber-500: #F59E0B;
+  --amber-600: #D97706;
+  --red-50: #FEF2F2;
+  --red-600: #DC2626;
+  --indigo-50: #EEF2FF;
+  --indigo-600: #4F46E5;
+  --slate-50: #F8FAFC;
+  --slate-600: #475569;
+  --gray-100: #F3F4F6;
+  --gray-300: #D1D5DB;
+  
+  /* Text Colors */
+  --text-primary: #031538;
+  --text-secondary: #4B5F82;
+  --text-muted: #8D9ABC;
+  --text-on-dark: #FFFFFF;
+  
+  /* Role-based Colors */
+  --background-app: var(--offwhite-50);
+  --background-surface: var(--white);
+  --background-surface-soft: var(--offwhite-75);
+  --background-hero: var(--brand-primary-navy);
+  --background-highlight: var(--blue-100);
+  --accent-primary: var(--brand-blue);
+  --accent-danger: var(--brand-red);
+  --accent-positive: var(--green-500);
+  --accent-warning: var(--orange-400);
+  --divider: var(--offwhite-75);
+  
+  /* Spacing Tokens */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  
+  /* Border Radius Tokens */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  
+  /* Shadow Tokens */
+  --shadow-card-sm: 0px 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0px 2px 12px rgba(0, 0, 0, 0.05);
+  --shadow-card-md: 0px 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-lg: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-floating: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  
+  /* Typography Scale */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-size: 16px;
+  
+  /* Legacy compatibility */
+  --background: var(--background-app);
+  --foreground: var(--text-primary);
+  --card: var(--background-surface);
+  --card-foreground: var(--text-primary);
+  --primary: var(--brand-primary-navy);
+  --primary-foreground: var(--text-on-dark);
+  --destructive: var(--accent-danger);
+  --destructive-foreground: var(--text-on-dark);
+  --border: var(--divider);
+  --muted: var(--offwhite-75);
+  --muted-foreground: var(--text-muted);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-normal: 400;
+}
+
+@theme inline {
+  /* Brand Colors */
+  --color-brand-navy: var(--brand-primary-navy);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-red: var(--brand-red);
+  --color-blue-300: var(--blue-300);
+  --color-blue-100: var(--blue-100);
+  --color-blue-50: var(--blue-50);
+  --color-green-500: var(--green-500);
+  --color-orange-400: var(--orange-400);
+  --color-purple-600: var(--purple-600);
+  --color-purple-50: var(--purple-50);
+  --color-offwhite-50: var(--offwhite-50);
+  --color-offwhite-75: var(--offwhite-75);
+  
+  /* Extended Color Palette */
+  --color-emerald-50: var(--emerald-50);
+  --color-emerald-600: var(--emerald-600);
+  --color-emerald-700: var(--emerald-700);
+  --color-amber-50: var(--amber-50);
+  --color-amber-500: var(--amber-500);
+  --color-amber-600: var(--amber-600);
+  --color-red-50: var(--red-50);
+  --color-red-600: var(--red-600);
+  --color-indigo-50: var(--indigo-50);
+  --color-indigo-600: var(--indigo-600);
+  --color-slate-50: var(--slate-50);
+  --color-slate-600: var(--slate-600);
+  --color-gray-100: var(--gray-100);
+  --color-gray-300: var(--gray-300);
+  
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-dark: var(--text-on-dark);
+  
+  /* Role-based Colors */
+  --color-bg-app: var(--background-app);
+  --color-bg-surface: var(--background-surface);
+  --color-bg-surface-soft: var(--background-surface-soft);
+  --color-bg-hero: var(--background-hero);
+  --color-bg-highlight: var(--background-highlight);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-danger: var(--accent-danger);
+  --color-accent-positive: var(--accent-positive);
+  --color-accent-warning: var(--accent-warning);
+  --color-divider: var(--divider);
+  
+  /* Legacy compatibility */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+  
+  /* Shadow Tokens */
+  --shadow-card-sm: var(--shadow-card-sm);
+  --shadow-card: var(--shadow-card);
+  --shadow-card-md: var(--shadow-card-md);
+  --shadow-card-lg: var(--shadow-card-lg);
+  --shadow-floating: var(--shadow-floating);
+}
+
+@layer base {
+  * {
+    @apply border-divider;
+  }
+
+  body {
+    @apply bg-offwhite-50 text-text-primary;
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Hide scrollbar */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/**
+ * Cashflow Coach Typography Scale
+ */
+@layer base {
+  /* Display - 32px / 38px / 600 */
+  h1 {
+    font-size: 32px;
+    line-height: 38px;
+    font-weight: 600;
+    color: #031538;
+  }
+
+  /* Title L - 22px / 28px / 600 */
+  h2 {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 600;
+    color: #031538;
+  }
+
+  /* Title M - 18px / 22px / 600 */
+  h3 {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 600;
+    color: #031538;
+  }
+
+  /* Body M - 16px / 22px / 400 */
+  h4,
+  p {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 400;
+    color: #4B5F82;
+  }
+
+  /* Label M - 13px / 16px / 500 */
+  label {
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 500;
+    color: #4B5F82;
+  }
+
+  /* Body M Bold - 16px / 22px / 600 */
+  button {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  /* Body M - 16px / 22px / 400 */
+  input {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 400;
+    color: #4B5F82;
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom Range Input Styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 2px solid currentColor;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 2px solid currentColor;
+}
+
+input[type="range"].range-blue::-webkit-slider-thumb {
+  border-color: #0041AD;
+}
+
+input[type="range"].range-blue::-moz-range-thumb {
+  border-color: #0041AD;
+}
+
+input[type="range"].range-red::-webkit-slider-thumb {
+  border-color: #ED0322;
+}
+
+input[type="range"].range-red::-moz-range-thumb {
+  border-color: #ED0322;
+}

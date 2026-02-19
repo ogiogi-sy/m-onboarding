@@ -10,6 +10,9 @@
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            'sans': ['FTPolar', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
           colors: {
             'brand-navy': '#00338D',
             'brand-blue': '#0046AD',
@@ -23,6 +26,36 @@
     }
   </script>
   <style>
+    /* FTPolar Font Family */
+    @font-face {
+      font-family: 'FTPolar';
+      src: url('fonts/FTPolar-Light.woff2') format('woff2');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'FTPolar';
+      src: url('fonts/FTPolar-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'FTPolar';
+      src: url('fonts/FTPolar-Semibold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'FTPolar';
+      src: url('fonts/FTPolar-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     /* Custom scrollbar */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
