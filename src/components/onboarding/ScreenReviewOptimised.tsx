@@ -16,7 +16,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'company',
       title: 'Company Details',
-      step: 3,
+      step: 2,
       content: (
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
@@ -37,7 +37,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'address',
       title: 'Trading Address',
-      step: 8,
+      step: 7,
       content: (
         <div className="space-y-3 text-sm">
            <div className="flex justify-between">
@@ -56,7 +56,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'people',
       title: 'Directors & Shareholders',
-      step: 4,
+      step: 3,
       content: (
         <div className="space-y-3">
           {state.directors.map(d => (
@@ -88,7 +88,7 @@ export function ScreenReviewOptimised({ state, onSubmit, onEdit }: ScreenReviewO
     {
       id: 'business',
       title: 'Business Activity',
-      step: 12,
+      step: 10,
       content: (
         <div className="space-y-3 text-sm">
           {state.businessDetails && (

@@ -16,7 +16,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
     {
       id: 'company',
       title: 'Company Details',
-      step: 3, // Confirm Company Step
+      step: 2, // Search + Confirm (merged)
       content: (
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
@@ -37,7 +37,7 @@ export function ScreenReviewIdeal({ state, onSubmit, onEdit }: ScreenReviewIdeal
     {
       id: 'people',
       title: 'Directors & Shareholders',
-      step: 4, // Director List step
+      step: 3, // Director List step
       content: (
         <div className="space-y-3">
           {state.directors.map(d => (

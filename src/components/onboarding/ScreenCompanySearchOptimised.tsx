@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Building, ChevronRight, Info } from 'lucide-react';
+import { Search, Building, ChevronRight, Info, Check } from 'lucide-react';
 import { Company } from './types';
 import { StickyFooter } from './StickyFooter';
 
@@ -11,6 +11,7 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
   const [query, setQuery] = useState('Metro Bank'); // Pre-filled
   const [hasSearched, setHasSearched] = useState(false);
   const [isInfoExpanded, setIsInfoExpanded] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   // Mock results
   const mockResults: Company[] = [
@@ -33,8 +34,76 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
   const handleSearch = () => {
     if (query.length > 2) {
       setHasSearched(true);
+      setSelectedCompany(null);
     }
   };
+
+  // Inline confirmation state — replaces the separate ScreenConfirmCompany
+  if (selectedCompany) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-brand-navy">Is this your company?</h2>
+        </div>
+
+        <div className="bg-white rounded-[20px] p-6 shadow-sm border-2 border-brand-blue">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+              <Building className="text-brand-blue" size={20} />
+            </div>
+            <h3 className="text-xl font-bold text-brand-navy">{selectedCompany.name}</h3>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Company Number</span>
+              <span className="text-brand-navy font-medium font-mono">{selectedCompany.number}</span>
+            </div>
+
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Address</span>
+              <span className="text-brand-navy font-medium text-right max-w-[200px]">{selectedCompany.address}</span>
+            </div>
+
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Incorporated</span>
+              <span className="text-brand-navy font-medium">15 March 2020</span>
+            </div>
+
+            <div className="flex justify-between items-baseline">
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Type</span>
+              <span className="text-brand-navy font-medium">Private Limited Company</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-3 p-3 bg-blue-50/60 rounded-[14px] border border-blue-100">
+          <Info className="text-brand-blue shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-brand-navy">
+            From <span className="font-bold">Companies House</span>
+          </p>
+        </div>
+
+        <StickyFooter>
+          <div className="space-y-3">
+            <button
+              onClick={() => onSelect(selectedCompany)}
+              className="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity"
+            >
+              Confirm & Continue
+            </button>
+
+            <button
+              onClick={() => setSelectedCompany(null)}
+              className="w-full text-brand-navy font-bold text-[16px] border border-divider hover:bg-offwhite-50 h-[48px] rounded-full transition-colors"
+            >
+              Not my company
+            </button>
+          </div>
+        </StickyFooter>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -58,7 +127,7 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
           className="w-full h-14 pl-5 pr-12 rounded-[20px] border-2 border-divider focus:border-brand-blue outline-none text-lg bg-white"
           placeholder="e.g. Metro Bank"
         />
-        <button 
+        <button
           onClick={handleSearch}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-blue hover:scale-110 transition-transform"
         >
@@ -80,7 +149,7 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
           </div>
 
           <div className="bg-blue-50/50 rounded-[20px] p-4 border border-blue-100">
-            <button 
+            <button
               onClick={() => setIsInfoExpanded(!isInfoExpanded)}
               className="w-full flex items-center justify-between text-left"
             >
@@ -88,12 +157,12 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
                 <Info size={20} className="text-brand-blue" />
                 <span>What happens next?</span>
               </div>
-              <ChevronRight 
-                size={20} 
-                className={`text-brand-blue transition-transform ${isInfoExpanded ? 'rotate-90' : ''}`} 
+              <ChevronRight
+                size={20}
+                className={`text-brand-blue transition-transform ${isInfoExpanded ? 'rotate-90' : ''}`}
               />
             </button>
-            
+
             {isInfoExpanded && (
               <div className="mt-3 text-text-secondary text-sm pl-7">
                 We'll fetch your company details from Companies House to save you time.
@@ -116,7 +185,7 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
           {mockResults.map((company) => (
             <button
               key={company.number}
-              onClick={() => onSelect(company)}
+              onClick={() => setSelectedCompany(company)}
               className="w-full text-left bg-white p-5 rounded-[20px] shadow-sm border border-divider hover:border-brand-blue group transition-all"
             >
               <div className="flex justify-between items-center">
@@ -131,10 +200,10 @@ export function ScreenCompanySearchOptimised({ onSelect }: ScreenCompanySearchOp
               </div>
             </button>
           ))}
-          
+
           <div className="pt-4 text-center">
-            <button 
-              onClick={() => setHasSearched(false)} 
+            <button
+              onClick={() => setHasSearched(false)}
               className="text-text-secondary hover:text-brand-navy text-sm font-medium"
             >
               Search again

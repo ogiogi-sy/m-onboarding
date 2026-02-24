@@ -56,6 +56,18 @@
       font-display: swap;
     }
 
+    /* Typography weight hierarchy */
+    /* Headings: Semi-bold 600 (override Tailwind's font-bold from 700 to 600) */
+    h1, h2, h3, h4 { font-weight: 600; }
+    .font-bold { font-weight: 600 !important; }
+    /* Body text (16px+): Light 300 for elegance */
+    body { font-weight: 300; }
+    p, input, textarea, select { font-weight: 300; }
+    /* Small text (12-14px): Regular 400 for readability */
+    .text-sm, .text-xs { font-weight: 400; }
+    label { font-weight: 500; }
+    /* Explicit Tailwind weights override these defaults */
+
     /* Custom scrollbar */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -235,8 +247,7 @@
       tradingAddressProof: null,
       isEditing: false,
       editingDirectorId: null,
-      termination: null,
-      showMilestone: null // 'company' | 'directors' | 'identity' | 'banking' | null
+      termination: null
     };
 
     // Mock data
@@ -275,7 +286,7 @@
     }
 
     function getTotalSteps() {
-      return state.journeyType === 'optimised' ? 20 : 10;
+      return state.journeyType === 'optimised' ? 18 : 9;
     }
 
     function getProgressPercentage() {
@@ -284,14 +295,14 @@
 
       // Ideal flow milestones
       if (state.journeyType === 'ideal') {
-        if (state.step >= 6 && state.idVerification?.status === 'verified') return Math.max(baseProgress, 50); // ID verified jump
-        if (state.step >= 8 && state.openBanking?.connected) return Math.max(baseProgress, 75); // Open Banking connected
+        if (state.step >= 5 && state.idVerification?.status === 'verified') return Math.max(baseProgress, 50); // ID verified jump
+        if (state.step >= 7 && state.openBanking?.connected) return Math.max(baseProgress, 75); // Open Banking connected
       }
 
       // Optimised flow milestones
       if (state.journeyType === 'optimised') {
         if (state.step >= 6 && state.idVerification?.status === 'verified') return Math.max(baseProgress, 40);
-        if (state.step >= 8 && state.openBanking?.connected) return Math.max(baseProgress, 55);
+        if (state.step >= 9 && state.openBanking?.connected) return Math.max(baseProgress, 55);
       }
 
       return baseProgress;
@@ -303,61 +314,12 @@
 
     function nextStep() {
       if (state.isEditing) {
-        const reviewStep = state.journeyType === 'optimised' ? 19 : 9;
+        const reviewStep = state.journeyType === 'optimised' ? 17 : 8;
         state.step = reviewStep;
         state.isEditing = false;
         render();
         return;
       }
-
-      // Check for milestone transitions (Ideal flow)
-      if (state.journeyType === 'ideal') {
-        if (state.step === 3) { // Company confirmed → Directors
-          state.showMilestone = 'company';
-          render();
-          return;
-        }
-        if (state.step === 4) { // Directors → Passkey
-          state.showMilestone = 'directors';
-          render();
-          return;
-        }
-        if (state.step === 6 && state.idVerification?.status === 'verified') { // Identity verified → Connect Bank
-          state.showMilestone = 'identity';
-          render();
-          return;
-        }
-        if (state.step === 8 && state.openBanking?.connected) { // Open Banking → Review
-          state.showMilestone = 'banking';
-          render();
-          return;
-        }
-      }
-
-      // Check for milestone transitions (Optimised flow)
-      if (state.journeyType === 'optimised') {
-        if (state.step === 3) { // Company confirmed → Directors
-          state.showMilestone = 'company';
-          render();
-          return;
-        }
-        if (state.step === 4) { // Directors → OTP
-          state.showMilestone = 'directors';
-          render();
-          return;
-        }
-        if (state.step === 7 && state.idVerification?.status === 'verified') { // Identity verified → Trading Address
-          state.showMilestone = 'identity';
-          render();
-          return;
-        }
-        if (state.step === 10 && state.openBanking?.connected) { // Open Banking → Business Activity
-          state.showMilestone = 'banking';
-          render();
-          return;
-        }
-      }
-
       state.step++;
       render();
     }
@@ -545,125 +507,39 @@
         const stages = {
           1: 'Getting Started',
           2: 'Company Search',
-          3: 'Confirm Company',
-          4: 'Directors',
-          5: 'Identity Setup',
-          6: 'Verify Identity',
-          7: 'Connect Bank',
-          8: 'Select Bank',
-          9: 'Review & Submit'
+          3: 'Directors',
+          4: 'Create Passkey',
+          5: 'Verify Identity',
+          6: 'Connect Bank',
+          7: 'Select Bank',
+          8: 'Review & Submit'
         };
         return stages[step] || '';
       } else {
         const stages = {
           1: 'Getting Started',
           2: 'Company Search',
-          3: 'Confirm Company',
-          4: 'Directors',
-          5: 'OTP Verification',
-          6: 'Create Password',
-          7: 'Verify Identity',
-          8: 'Trading Address',
-          9: 'Connect Bank',
-          10: 'Select Bank',
-          11: 'Business Activity',
-          12: 'Monthly Income',
-          13: 'Cash Handling',
-          14: 'International',
-          15: 'Additional Info',
-          16: 'Regulatory',
-          17: 'Account Type',
-          18: 'Debit Card',
-          19: 'Review & Submit'
+          3: 'Directors',
+          4: 'OTP Verification',
+          5: 'Create Password',
+          6: 'Verify Identity',
+          7: 'Trading Address',
+          8: 'Connect Bank',
+          9: 'Select Bank',
+          10: 'Business Activity',
+          11: 'Annual Turnover',
+          12: 'Employees',
+          13: 'International',
+          14: 'Revenue Sources',
+          15: 'Website',
+          16: 'Monthly Income',
+          17: 'Review & Submit'
         };
         return stages[step] || '';
       }
     }
 
-    // Milestone data for interstitial screens
-    const milestones = {
-      company: {
-        icon: 'building',
-        iconBg: 'bg-green-100',
-        iconColor: 'text-green-600',
-        title: 'Company details saved',
-        message: 'We found your company on Companies House.',
-        nextLabel: 'Directors',
-        nextDescription: 'We\'ll show you who needs to verify their identity.'
-      },
-      directors: {
-        icon: 'user',
-        iconBg: 'bg-green-100',
-        iconColor: 'text-green-600',
-        title: 'Directors confirmed',
-        message: 'Great progress! Your directors are set up.',
-        nextLabel: 'Identity verification',
-        nextDescription: 'Quick selfie and ID check to confirm who you are.'
-      },
-      identity: {
-        icon: 'shield-check',
-        iconBg: 'bg-green-100',
-        iconColor: 'text-green-600',
-        title: 'Identity verified',
-        message: 'You\'re confirmed! Nearly there now.',
-        nextLabel: 'Connect your bank',
-        nextDescription: 'Speed up verification with Open Banking.'
-      },
-      banking: {
-        icon: 'landmark',
-        iconBg: 'bg-green-100',
-        iconColor: 'text-green-600',
-        title: 'Bank connected',
-        message: 'Business details verified automatically.',
-        nextLabel: 'Review & submit',
-        nextDescription: 'Check everything looks good, then you\'re done!'
-      }
-    };
 
-    function renderMilestoneInterstitial() {
-      const milestone = milestones[state.showMilestone];
-      if (!milestone) return '';
-
-      const progressPercent = getProgressPercentage();
-
-      return `
-        <div class="min-h-screen bg-gradient-to-b from-[#0046ad] to-[#000c45] flex flex-col items-center justify-center px-6 py-12">
-          <div class="w-full max-w-md text-center space-y-6 fade-in">
-            <!-- Success Icon -->
-            <div class="flex justify-center">
-              <div class="w-20 h-20 rounded-full ${milestone.iconBg} flex items-center justify-center shadow-lg">
-                ${icon(milestone.icon, 'w-10 h-10 ' + milestone.iconColor)}
-              </div>
-            </div>
-
-            <!-- Celebration Text -->
-            <div class="space-y-2">
-              <h1 class="text-2xl font-bold text-white">${milestone.title}</h1>
-              <p class="text-white/80">${milestone.message}</p>
-            </div>
-
-            <!-- Progress indicator -->
-            <div class="bg-white/10 rounded-full px-4 py-2 inline-flex items-center gap-2">
-              <div class="w-3 h-3 rounded-full bg-green-400"></div>
-              <span class="text-white/90 text-sm font-medium">${progressPercent}% complete</span>
-            </div>
-
-            <!-- Next Step Preview -->
-            <div class="bg-white/10 backdrop-blur-sm rounded-[20px] p-5 border border-white/20 text-left mt-8">
-              <p class="text-white/60 text-xs uppercase tracking-wider mb-2">Next up</p>
-              <h3 class="text-white font-bold text-lg mb-1">${milestone.nextLabel}</h3>
-              <p class="text-white/70 text-sm">${milestone.nextDescription}</p>
-            </div>
-
-            <!-- Continue Button -->
-            <button onclick="state.showMilestone=null;state.step++;render()" class="w-full h-[52px] rounded-full font-bold text-lg bg-white text-brand-navy hover:bg-white/90 transition-all shadow-lg flex items-center justify-center gap-2 mt-6">
-              Continue
-              ${icon('arrow-right', 'w-5 h-5')}
-            </button>
-          </div>
-        </div>
-      `;
-    }
 
     // =====================
     // LAYOUT COMPONENTS
@@ -888,6 +764,61 @@
 
     // Company Search (Step 2)
     function renderCompanySearch() {
+      // Inline confirmation state (folded from old ConfirmCompany screen)
+      if (window.confirmingCompany && state.selectedCompany) {
+        const content = `
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <h2 class="text-2xl font-bold text-brand-navy">Is this your company?</h2>
+            </div>
+
+            <div class="bg-white rounded-[20px] p-5 shadow-sm border border-divider">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-[12px] bg-offwhite-50 flex items-center justify-center shrink-0">
+                  ${icon('building', 'w-6 h-6 text-brand-navy')}
+                </div>
+                <div>
+                  <h3 class="text-lg font-bold text-brand-navy">${toTitleCase(state.selectedCompany.name)}</h3>
+                  <p class="text-text-secondary text-sm">${state.selectedCompany.status} company</p>
+                </div>
+              </div>
+
+              <div class="mt-5 pt-5 border-t border-divider space-y-4">
+                <div class="flex justify-between items-start">
+                  <span class="text-text-secondary text-sm">Company number</span>
+                  <span class="text-brand-navy font-mono font-medium text-sm">${state.selectedCompany.number}</span>
+                </div>
+                <div class="flex justify-between items-start">
+                  <span class="text-text-secondary text-sm">Registered address</span>
+                  <span class="text-brand-navy font-medium text-sm text-right max-w-[200px]">${state.selectedCompany.address}</span>
+                </div>
+                <div class="flex justify-between items-start">
+                  <span class="text-text-secondary text-sm">Incorporated</span>
+                  <span class="text-brand-navy font-medium text-sm">15 March 2020</span>
+                </div>
+                <div class="flex justify-between items-start">
+                  <span class="text-text-secondary text-sm">Company type</span>
+                  <span class="text-brand-navy font-medium text-sm">Private Limited Company</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-[14px] border border-slate-200">
+              ${icon('info', 'w-5 h-5 text-text-secondary shrink-0 mt-0.5')}
+              <p class="text-sm text-text-secondary">Information from <span class="font-medium text-brand-navy">Companies House</span></p>
+            </div>
+
+            ${renderStickyFooter(`
+              <div class="space-y-4">
+                <button onclick="state.directors=JSON.parse(JSON.stringify(mockDirectors));window.confirmingCompany=false;nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity">Confirm & Continue</button>
+                <button onclick="state.selectedCompany=null;window.confirmingCompany=false;render()" class="w-full text-brand-navy font-bold text-[16px] border border-divider hover:bg-offwhite-50 h-[48px] rounded-full transition-colors">Not my company</button>
+              </div>
+            `)}
+          </div>
+        `;
+        return renderLayout(content, { currentStep: 2, totalSteps: getTotalSteps(), title: 'Confirm Company', onBack: true });
+      }
+
       const hasSearched = window.companySearched || false;
       const query = window.companyQuery || '';
 
@@ -976,7 +907,7 @@
                 <p class="text-text-secondary text-sm font-medium">${filteredCompanies.length} ${filteredCompanies.length === 1 ? 'company' : 'companies'} found</p>
 
                 ${filteredCompanies.map(company => `
-                  <button onclick="state.selectedCompany=${JSON.stringify(company).replace(/"/g, '&quot;')};nextStep()" class="w-full text-left bg-white p-4 rounded-[16px] shadow-sm border border-divider hover:border-brand-blue hover:shadow-md group transition-all">
+                  <button onclick="state.selectedCompany=${JSON.stringify(company).replace(/"/g, '&quot;')};window.confirmingCompany=true;render()" class="w-full text-left bg-white p-4 rounded-[16px] shadow-sm border border-divider hover:border-brand-blue hover:shadow-md group transition-all">
                     <div class="flex justify-between items-center">
                       <div class="flex-1">
                         <h3 class="font-bold text-brand-navy">${toTitleCase(company.name)}</h3>
@@ -1005,64 +936,7 @@
       return renderLayout(content, { currentStep: 2, totalSteps: getTotalSteps(), title: 'Find Business', onBack: true });
     }
 
-    // Confirm Company (Step 3)
-    function renderConfirmCompany() {
-      if (!state.selectedCompany) return renderCompanySearch();
-
-      const content = `
-        <div class="space-y-6">
-          <div class="space-y-2">
-            <h2 class="text-2xl font-bold text-brand-navy">Confirm your company</h2>
-          </div>
-
-          <div class="bg-white rounded-[20px] p-5 shadow-sm border border-divider">
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-[12px] bg-offwhite-50 flex items-center justify-center shrink-0">
-                ${icon('building', 'w-6 h-6 text-brand-navy')}
-              </div>
-              <div>
-                <h3 class="text-lg font-bold text-brand-navy">${toTitleCase(state.selectedCompany.name)}</h3>
-                <p class="text-text-secondary text-sm">${state.selectedCompany.status} company</p>
-              </div>
-            </div>
-
-            <div class="mt-5 pt-5 border-t border-divider space-y-4">
-              <div class="flex justify-between items-start">
-                <span class="text-text-secondary text-sm">Company number</span>
-                <span class="text-brand-navy font-mono font-medium text-sm">${state.selectedCompany.number}</span>
-              </div>
-              <div class="flex justify-between items-start">
-                <span class="text-text-secondary text-sm">Registered address</span>
-                <span class="text-brand-navy font-medium text-sm text-right max-w-[200px]">${state.selectedCompany.address}</span>
-              </div>
-              <div class="flex justify-between items-start">
-                <span class="text-text-secondary text-sm">Incorporated</span>
-                <span class="text-brand-navy font-medium text-sm">15 March 2020</span>
-              </div>
-              <div class="flex justify-between items-start">
-                <span class="text-text-secondary text-sm">Company type</span>
-                <span class="text-brand-navy font-medium text-sm">Private Limited Company</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-[14px] border border-slate-200">
-            ${icon('info', 'w-5 h-5 text-text-secondary shrink-0 mt-0.5')}
-            <p class="text-sm text-text-secondary">Information from <span class="font-medium text-brand-navy">Companies House</span>. Next: Tell us about your directors.</p>
-          </div>
-
-          ${renderStickyFooter(`
-            <div class="space-y-4">
-              <button onclick="state.directors=JSON.parse(JSON.stringify(mockDirectors));nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity">Confirm & Continue</button>
-              <button onclick="prevStep()" class="w-full text-brand-navy font-bold text-[16px] border border-divider hover:bg-offwhite-50 h-[48px] rounded-full transition-colors">This isn't my company</button>
-            </div>
-          `)}
-        </div>
-      `;
-      return renderLayout(content, { currentStep: 3, totalSteps: getTotalSteps(), title: 'Confirm Company', onBack: true });
-    }
-
-    // Directors List (Step 4)
+    // Directors List (Step 3)
     function toggleDirectorExpand(id) {
       window.expandedDirector = window.expandedDirector === id ? null : id;
       render();
@@ -1256,7 +1130,7 @@
           `)}
         </div>
       `;
-      return renderLayout(content, { currentStep: 4, totalSteps: getTotalSteps(), title: 'Directors', onBack: true });
+      return renderLayout(content, { currentStep: 3, totalSteps: getTotalSteps(), title: 'Directors', onBack: true });
     }
 
     // Create Passkey (Step 5 - Ideal)
@@ -1324,7 +1198,7 @@
           `)}
         </div>
       `;
-      return renderLayout(content, { currentStep: 5, totalSteps: getTotalSteps(), title: 'Create Passkey', onBack: true });
+      return renderLayout(content, { currentStep: 4, totalSteps: getTotalSteps(), title: 'Create Passkey', onBack: true });
     }
 
     // OTP Verification (Optimised flow)
@@ -1387,7 +1261,7 @@
           </div>
         </div>
       `;
-      return renderLayout(content, { currentStep: 5, totalSteps: getTotalSteps(), title: 'Verify Email', onBack: true });
+      return renderLayout(content, { currentStep: 4, totalSteps: getTotalSteps(), title: 'Verify Email', onBack: true });
     }
 
     // Create Password (Optimised flow)
@@ -1551,7 +1425,7 @@
           `)}
         </div>
       `;
-      return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Create Password', onBack: true });
+      return renderLayout(content, { currentStep: 5, totalSteps: getTotalSteps(), title: 'Create Password', onBack: true });
     }
 
     // Trading Address (Optimised flow)
@@ -1627,7 +1501,7 @@
           `)}
         </div>
       `;
-      return renderLayout(content, { currentStep: 9, totalSteps: getTotalSteps(), title: 'Trading Address', onBack: true });
+      return renderLayout(content, { currentStep: 7, totalSteps: getTotalSteps(), title: 'Trading Address', onBack: true });
     }
 
     // Business Activity Intro
@@ -1691,6 +1565,7 @@
       return renderLayout(content, { currentStep: 10, totalSteps: getTotalSteps(), title: 'Business Details', onBack: true });
     }
 
+
     // Identity Verification (Step 6)
     function renderIdentityVerification() {
       const status = window.idStatus || 'select';
@@ -1709,48 +1584,7 @@
             </div>
           </div>
         `;
-        return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
-      }
-
-      if (status === 'verified') {
-        // Auto-advance after 3 seconds
-        if (!window.idAutoAdvanceSet) {
-          window.idAutoAdvanceSet = true;
-          setTimeout(() => {
-            if (window.idStatus === 'verified') {
-              state.idVerification = {type: 'passport', status: 'verified'};
-              window.idStatus = 'select';
-              window.idAutoAdvanceSet = false;
-              nextStep();
-            }
-          }, 3000);
-        }
-
-        const content = `
-          <div class="flex flex-col items-center justify-center text-center pt-8 pb-12">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              ${icon('check', 'w-8 h-8 text-green-600')}
-            </div>
-            <h2 class="text-2xl font-bold text-brand-navy mb-2">Identity verified</h2>
-            <p class="text-text-secondary max-w-xs">Great! We've confirmed your identity. Let's continue with your application.</p>
-
-            <div class="mt-8 w-full max-w-xs bg-slate-50 rounded-[14px] p-4 text-left">
-              <p class="text-sm text-text-secondary">
-                <span class="font-medium text-brand-navy">Next:</span> Connect your existing business bank to speed up verification.
-              </p>
-            </div>
-
-            <p class="text-xs text-text-muted mt-4">Continuing automatically in 3 seconds...</p>
-
-            ${renderStickyFooter(`
-              <button onclick="window.idAutoAdvanceSet=false;state.idVerification={type:'passport',status:'verified'};window.idStatus='select';nextStep()" class="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group">
-                Continue now
-                ${icon('arrow-right', 'w-4 h-4 group-hover:translate-x-1 transition-transform')}
-              </button>
-            `)}
-          </div>
-        `;
-        return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verified', onBack: true });
+        return renderLayout(content, { currentStep: state.journeyType === 'ideal' ? 5 : 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
       }
 
       const content = `
@@ -1780,7 +1614,7 @@
 
           <div class="space-y-2">
             <p class="text-sm font-medium text-brand-navy">Choose your document</p>
-            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{window.idStatus='verified';render()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
+            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{state.idVerification={type:'passport',status:'verified'};window.idStatus='select';showToast('Identity verified \u2713');nextStep()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-[10px] bg-blue-50 flex items-center justify-center shrink-0">
                   ${icon('camera', 'w-5 h-5 text-brand-blue')}
@@ -1793,7 +1627,7 @@
               ${icon('chevron-right', 'w-5 h-5 text-text-muted group-hover:text-brand-blue')}
             </button>
 
-            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{window.idStatus='verified';render()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
+            <button onclick="window.idStatus='scanning';render();setTimeout(()=>{state.idVerification={type:'licence',status:'verified'};window.idStatus='select';showToast('Identity verified \u2713');nextStep()},2500)" class="w-full bg-white py-4 px-4 rounded-[14px] border border-divider hover:border-brand-blue text-left flex items-center justify-between group transition-all">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-[10px] bg-purple-50 flex items-center justify-center shrink-0">
                   ${icon('credit-card', 'w-5 h-5 text-purple-600')}
@@ -1819,7 +1653,7 @@
           </div>
         </div>
       `;
-      return renderLayout(content, { currentStep: 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
+      return renderLayout(content, { currentStep: state.journeyType === 'ideal' ? 5 : 6, totalSteps: getTotalSteps(), title: 'Verify Identity', onBack: true });
     }
 
     // Connect Bank Intro (Step 7)
@@ -1903,7 +1737,7 @@
           </div>
         </div>
       `;
-      return renderLayout(content, { currentStep: 7, totalSteps: getTotalSteps(), title: 'Connect Bank', onBack: true });
+      return renderLayout(content, { currentStep: state.journeyType === 'ideal' ? 6 : 8, totalSteps: getTotalSteps(), title: 'Connect Bank', onBack: true });
     }
 
     // Open Banking - Select Bank (Step 8)
@@ -1921,7 +1755,7 @@
             </div>
           </div>
         `;
-        return renderLayout(content, { currentStep: 8, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
+        return renderLayout(content, { currentStep: state.journeyType === 'ideal' ? 7 : 9, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
       }
 
       const bankFilter = window.bankFilter || '';
@@ -1977,7 +1811,7 @@
           `)}
         </div>
       `;
-      return renderLayout(content, { currentStep: 8, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
+      return renderLayout(content, { currentStep: state.journeyType === 'ideal' ? 7 : 9, totalSteps: getTotalSteps(), title: 'Select Bank', onBack: true });
     }
 
     // Review Application (Step 9)
@@ -1996,7 +1830,7 @@
             <div class="bg-white rounded-[16px] shadow-sm border border-divider overflow-hidden">
               <div class="flex items-center justify-between px-4 py-3 border-b border-divider bg-slate-50">
                 <h3 class="font-bold text-brand-navy text-sm">Company details</h3>
-                <button onclick="goToStep(3)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
+                <button onclick="goToStep(2)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
                   ${icon('pencil', 'w-4 h-4')}
                 </button>
               </div>
@@ -2020,7 +1854,7 @@
             <div class="bg-white rounded-[16px] shadow-sm border border-divider overflow-hidden">
               <div class="flex items-center justify-between px-4 py-3 border-b border-divider bg-slate-50">
                 <h3 class="font-bold text-brand-navy text-sm">Directors</h3>
-                <button onclick="goToStep(4)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
+                <button onclick="goToStep(3)" class="text-brand-blue hover:bg-blue-100 p-1.5 rounded-full transition-colors">
                   ${icon('pencil', 'w-4 h-4')}
                 </button>
               </div>
@@ -2106,7 +1940,7 @@
           `)}
         </div>
       `;
-      const reviewStep = state.journeyType === 'optimised' ? 19 : 9;
+      const reviewStep = state.journeyType === 'optimised' ? 17 : 8;
       return renderLayout(content, { currentStep: reviewStep, totalSteps: getTotalSteps(), title: 'Review', onBack: true });
     }
 
@@ -2236,62 +2070,53 @@
     function render() {
       const app = document.getElementById('app');
 
-      // Show milestone interstitial if active
-      if (state.showMilestone) {
-        app.innerHTML = renderMilestoneInterstitial();
-        return;
-      }
-
       // Journey Selection
       if (state.step === 0) {
         app.innerHTML = renderJourneySelection();
         return;
       }
 
-      // Ideal Flow (10 steps)
+      // Ideal Flow (9 steps)
       if (state.journeyType === 'ideal') {
         switch (state.step) {
           case 1: app.innerHTML = renderWelcome(); break;
           case 2: app.innerHTML = renderCompanySearch(); break;
-          case 3: app.innerHTML = renderConfirmCompany(); break;
-          case 4: app.innerHTML = renderDirectorsList(); break;
-          case 5: app.innerHTML = renderCreatePasskey(); break;
-          case 6: app.innerHTML = renderIdentityVerification(); break;
-          case 7: app.innerHTML = renderConnectBankIntro(); break;
-          case 8: app.innerHTML = renderOpenBanking(); break;
-          case 9: app.innerHTML = renderReview(); break;
-          case 10: app.innerHTML = renderDashboard(); break;
+          case 3: app.innerHTML = renderDirectorsList(); break;
+          case 4: app.innerHTML = renderCreatePasskey(); break;
+          case 5: app.innerHTML = renderIdentityVerification(); break;
+          case 6: app.innerHTML = renderConnectBankIntro(); break;
+          case 7: app.innerHTML = renderOpenBanking(); break;
+          case 8: app.innerHTML = renderReview(); break;
+          case 9: app.innerHTML = renderDashboard(); break;
           default: app.innerHTML = renderWelcome();
         }
         return;
       }
 
-      // Optimised Flow (20 steps)
+      // Optimised Flow (18 steps)
       if (state.journeyType === 'optimised') {
         switch (state.step) {
           case 1: app.innerHTML = renderWelcome(); break;
           case 2: app.innerHTML = renderCompanySearch(); break;
-          case 3: app.innerHTML = renderConfirmCompany(); break;
-          case 4: app.innerHTML = renderDirectorsList(); break;
-          case 5: app.innerHTML = renderOTPVerification(); break;
-          case 6: app.innerHTML = renderCreatePassword(); break;
-          case 7: app.innerHTML = renderIdentityVerification(); break;
-          case 8: app.innerHTML = renderTradingAddress(); break;
-          case 9: app.innerHTML = renderConnectBankIntro(); break;
-          case 10: app.innerHTML = renderOpenBanking(); break;
-          case 11: app.innerHTML = renderBusinessActivityIntro(); break;
+          case 3: app.innerHTML = renderDirectorsList(); break;
+          case 4: app.innerHTML = renderOTPVerification(); break;
+          case 5: app.innerHTML = renderCreatePassword(); break;
+          case 6: app.innerHTML = renderIdentityVerification(); break;
+          case 7: app.innerHTML = renderTradingAddress(); break;
+          case 8: app.innerHTML = renderConnectBankIntro(); break;
+          case 9: app.innerHTML = renderOpenBanking(); break;
+          case 10: app.innerHTML = renderBusinessActivityIntro(); break;
+          case 11:
           case 12:
           case 13:
           case 14:
           case 15:
           case 16:
-          case 17:
-          case 18:
             // Question screens
             app.innerHTML = renderQuestionScreen();
             break;
-          case 19: app.innerHTML = renderReview(); break;
-          case 20: app.innerHTML = renderDashboard(); break;
+          case 17: app.innerHTML = renderReview(); break;
+          case 18: app.innerHTML = renderDashboard(); break;
           default: app.innerHTML = renderWelcome();
         }
       }
@@ -2300,25 +2125,25 @@
     // Question Screen (for optimised flow)
     function renderQuestionScreen() {
       const questionData = {
-        12: {
+        11: {
           title: 'Annual Turnover',
           subtitle: 'What is your expected annual turnover?',
           help: 'This helps us recommend the right account features.',
           options: ['£0 – £250k', '£250k – £1M', '£1M – £5M', '£5M+']
         },
-        13: {
+        12: {
           title: 'Number of Employees',
           subtitle: 'How many people work in your business?',
           help: 'Include yourself and any part-time staff.',
           options: ['Just me (1)', '2–5 employees', '6–10 employees', '11–50 employees', '50+ employees']
         },
-        14: {
+        13: {
           title: 'International Payments',
           subtitle: 'Will you send or receive payments outside the UK?',
           help: 'This includes payments to suppliers, freelancers, or customers abroad.',
           options: ['Yes, regularly', 'No', 'Occasionally']
         },
-        15: {
+        14: {
           title: 'Revenue Sources',
           subtitle: 'How does your business earn money?',
           help: 'Select all that apply to your primary income.',
@@ -2330,26 +2155,20 @@
           ],
           hasDescriptions: true
         },
-        16: {
+        15: {
           title: 'Website',
           subtitle: 'Do you have a business website?',
           options: ['Yes', 'No', 'Setting one up']
         },
-        17: {
+        16: {
           title: 'Monthly Income',
           subtitle: "What's your expected monthly income?",
           help: 'An estimate is fine — this helps us set up your account correctly.',
           options: ['Under £10k', '£10k – £50k', '£50k – £100k', '£100k+']
-        },
-        18: {
-          title: 'Cash Deposits',
-          subtitle: 'Will you deposit cash (notes and coins) into this account?',
-          help: 'This does not include card payments or bank transfers.',
-          options: ['No cash deposits', 'Small amounts (up to £3k/month)', 'Medium amounts (£3k–£10k/month)', 'Large amounts (over £10k/month)']
         }
       };
 
-      const q = questionData[state.step] || questionData[12];
+      const q = questionData[state.step] || questionData[11];
       const selected = window[`q${state.step}`] || null;
 
       const content = `

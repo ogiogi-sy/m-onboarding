@@ -8,15 +8,15 @@ interface ScreenIdentityVerificationProps {
 import { StickyFooter } from './StickyFooter';
 
 export function ScreenIdentityVerification({ onVerified }: ScreenIdentityVerificationProps) {
-  const [status, setStatus] = useState<'select' | 'scanning' | 'verified'>('select');
+  const [status, setStatus] = useState<'select' | 'scanning'>('select');
   const [selectedType, setSelectedType] = useState<'passport' | 'license' | null>(null);
 
   const handleStartScan = (type: 'passport' | 'license') => {
     setSelectedType(type);
     setStatus('scanning');
-    // Simulate scanning process
+    // Simulate scanning, then auto-advance (no success screen)
     setTimeout(() => {
-      setStatus('verified');
+      onVerified();
     }, 2500);
   };
 
@@ -32,28 +32,6 @@ export function ScreenIdentityVerification({ onVerified }: ScreenIdentityVerific
           <h3 className="text-xl font-bold text-brand-navy mb-2">Verifying document...</h3>
           <p className="text-text-secondary">Please hold steady</p>
         </div>
-      </div>
-    );
-  }
-
-  if (status === 'verified') {
-    return (
-      <div className="space-y-6 text-center pt-8">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="text-green-600" size={40} strokeWidth={3} />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-brand-navy mb-2">Identity Verified</h2>
-          <p className="text-text-secondary">We've confirmed your identity successfully.</p>
-        </div>
-        <StickyFooter>
-          <button
-            onClick={onVerified}
-            className="w-full bg-brand-navy text-white h-[48px] rounded-full font-bold text-[16px] hover:opacity-90 transition-opacity"
-          >
-            Continue
-          </button>
-        </StickyFooter>
       </div>
     );
   }
